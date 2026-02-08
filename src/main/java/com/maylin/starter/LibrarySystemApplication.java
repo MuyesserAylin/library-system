@@ -1,8 +1,9 @@
-package com.maylin.library_system;
+package com.maylin.starter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+@EntityScan(basePackages = {"com.maylin"})
 @SpringBootApplication
 public class LibrarySystemApplication {
 
