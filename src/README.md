@@ -11,6 +11,6 @@ Bugün projenin **Domain Model (Entity)** katmanı ve veritabanı ilişkileri ba
 * **Veritabanı Yapılandırması:** PostgreSQL (pgAdmin) bağlantısı yapıldı ve `ddl-auto=update` ile tablolar otomatik oluşturuldu. 🐘
 * **ER Diyagramı:** pgAdmin üzerinden tabloların ilişkisel haritası doğrulandı. 🗺️
 
-![Proje Diyagramı](ER_DIAGRAM.png)
+![Proje Diyagramı](images/ER_DIAGRAM.png)
 
 --ER DIAGRAM--
