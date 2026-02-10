@@ -39,8 +39,8 @@ public class Book {
 	@Column(name="ISBN",unique=true,nullable=false)
 	private String ISBN;
 	
-	@ManyToOne
-	@JoinColumn(name="author_id",referencedColumnName = "id")
+	@ManyToOne(optional=false)//Java sevıyesınde zorunlu yapar
+	@JoinColumn(name="author_id",referencedColumnName = "id",nullable=false)//SQL sevıyesınde zorunlu ypar.
 	private Author author;
 	
 	@OneToMany(mappedBy="book",cascade=CascadeType.REMOVE,orphanRemoval =true)

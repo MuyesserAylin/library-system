@@ -1,0 +1,110 @@
+package com.maylin.service.Impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.maylin.dto.DtoBookShortResponse;
+import com.maylin.dto.DtoCategoryRequest;
+import com.maylin.dto.DtoCategoryResponse;
+import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.model.Book;
+import com.maylin.model.Category;
+import com.maylin.repository.ICategoryRepository;
+import com.maylin.service.ICategoryService;
+@Service
+public class CategoryServiceImpl implements ICategoryService{
+
+	@Autowired
+	private ICategoryRepository categoryRepository;
+	
+	@Override
+	public DtoCategoryResponse saveCategory(DtoCategoryRequest request) {
+		
+		Category newCategory=new Category();
+		BeanUtils.copyProperties(request, newCategory);
+		Category dbCategory=categoryRepository.save(newCategory);
+		//TODO:aynı adda bır tur daha eklerse exception fırlatır
+		DtoCategoryResponse response=new DtoCategoryResponse();
+		if(dbCategory!=null) {
+			BeanUtils.copyProperties(dbCategory, response);
+
+		}
+		return response;
+	}
+
+	@Override
+	public DtoCategoryResponse getCategoryById(Long id) {
+		
+	 Optional<Category> optional=categoryRepository.findCategoryWithBooks(id);
+	  DtoCategoryResponse  response=new DtoCategoryResponse();
+	  
+	if(optional.isPresent()) {
+		List<DtoBookShortResponse> responseBookList=new ArrayList<>();
+		Category dbCategory=optional.get();
+		BeanUtils.copyProperties(dbCategory, response);
+		
+		if(dbCategory.getBooks()!=null  && !dbCategory.getBooks().isEmpty()) {
+			 
+
+			for (Book dbBook :dbCategory.getBooks()) {
+				
+				DtoBookShortResponse responseBook=new DtoBookShortResponse();
+				BeanUtils.copyProperties(dbBook, responseBook);
+				
+				if(dbBook.getAuthor()!=null && !dbBook.getAuthor().getFirstName().isEmpty() && !dbBook.getAuthor().getLastName().isEmpty() ) {
+					String fullName=dbBook.getAuthor().getFirstName() +" "+dbBook.getAuthor().getLastName();
+					responseBook.setAuthorName(fullName);
+					
+				}
+				responseBookList.add(responseBook);
+			}
+		}
+		response.setBooks(responseBookList);
+		return response;
+	}else {
+		return null;
+		//TODO:exception fılratıcak aranılan categoru dbde yok.sımdılık null gıtsın
+	}
+	 
+	}
+
+	@Override
+	public List<DtoCategoryShortResponse> getAllCategories() {
+		
+		List<Category> listCategories=categoryRepository.findAll();
+		List<DtoCategoryShortResponse> listDtoCategories=new ArrayList<>();
+		
+		
+		for(Category dbCategory : listCategories) {
+				
+				DtoCategoryShortResponse dtoResponse=new DtoCategoryShortResponse();
+				BeanUtils.copyProperties(dbCategory, dtoResponse);
+				
+				listDtoCategories.add(dtoResponse);
+			 
+		}
+		return listDtoCategories;	
+		
+	}
+
+	@Override
+	public void deleteCategory(Long id) {
+		Category category=categoryRepository.findById(id)
+				.orElseThrow(()->new RuntimeException("Not found category"));//burayada ozel exception fırlatcam
+		
+		List<Book> books=category.getBooks();
+		if(books!=null && !books.isEmpty()) {
+			
+			//TODO: exception fırlat bu categoryının kıtapları var once o kıtapları hallet sonra sıl dıye
+			throw new RuntimeException("Category include books.Not delete!");
+		}
+		
+		categoryRepository.delete(category);
+	}
+
+}

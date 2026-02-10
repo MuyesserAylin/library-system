@@ -14,3 +14,6 @@ Bugün projenin **Domain Model (Entity)** katmanı ve veritabanı ilişkileri ba
 ![Proje Diyagramı](images/ER_DIAGRAM.png)
 
 --ER DIAGRAM--
+
+Category Management API Category modülü için CRUD (Create, Read, Update, Delete) işlemleri tamamlandı. Uygulama, veritabanı olarak PostgreSQL kullanmaktadır.
+![Catgory CRUD](images/category_save.png)
