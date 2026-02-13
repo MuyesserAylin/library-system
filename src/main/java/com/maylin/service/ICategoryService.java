@@ -15,5 +15,7 @@ public interface ICategoryService {
 	public List<DtoCategoryShortResponse> getAllCategories();
 	
 	public void deleteCategory(Long id);
+	
+	public DtoCategoryShortResponse updateCategory(Long id,DtoCategoryRequest updateCategory);
 
 }

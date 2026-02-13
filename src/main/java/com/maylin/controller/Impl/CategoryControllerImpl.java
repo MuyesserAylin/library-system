@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,6 +57,16 @@ public class CategoryControllerImpl implements ICategoryController{
 	@DeleteMapping(path="/delete/{id}")
 	public void deleteCategory(@PathVariable("id") Long id) {
 		categoryService.deleteCategory(id);
+	}
+	
+	@Override
+	@PutMapping(path="/update/{id}")
+	public DtoCategoryShortResponse updateCategory(@PathVariable("id") Long id,@RequestBody DtoCategoryRequest updateCategory) {
+		
+		//TODO: updateCategory ıcındekı valıdayonlar uymazsa exceptiom
+		//TODO: Kullanıcı hıc verı gondermezzse  HttpMessageNotReadableException
+		return categoryService.updateCategory(id,updateCategory);
+		
 	}
 	
 	

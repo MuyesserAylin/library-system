@@ -25,10 +25,15 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public DtoCategoryResponse saveCategory(DtoCategoryRequest request) {
 		
+		String name=request.getName().trim();
+		Boolean exists=categoryRepository.existsByNameIgnoreCase(name);
+		if(exists) {
+			throw new RuntimeException("This category allready exists in system.");
+			//TODO:Bu adda category var hatası fırlat.
+		}
 		Category newCategory=new Category();
 		BeanUtils.copyProperties(request, newCategory);
 		Category dbCategory=categoryRepository.save(newCategory);
-		//TODO:aynı adda bır tur daha eklerse exception fırlatır
 		DtoCategoryResponse response=new DtoCategoryResponse();
 		if(dbCategory!=null) {
 			BeanUtils.copyProperties(dbCategory, response);
@@ -76,7 +81,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public List<DtoCategoryShortResponse> getAllCategories() {
 		
-		List<Category> listCategories=categoryRepository.findAll();
+		List<Category> listCategories=categoryRepository.findByOrderByNameAsc();
 		List<DtoCategoryShortResponse> listDtoCategories=new ArrayList<>();
 		
 		
@@ -95,7 +100,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public void deleteCategory(Long id) {
 		Category category=categoryRepository.findById(id)
-				.orElseThrow(()->new RuntimeException("Not found category"));//burayada ozel exception fırlatcam
+				.orElseThrow(()->new RuntimeException("Not found category."));//burayada ozel exception fırlatcam
 		
 		List<Book> books=category.getBooks();
 		if(books!=null && !books.isEmpty()) {
@@ -105,6 +110,29 @@ public class CategoryServiceImpl implements ICategoryService{
 		}
 		
 		categoryRepository.delete(category);
+	}
+
+	@Override
+	public DtoCategoryShortResponse updateCategory(Long id, DtoCategoryRequest updateCategory) {
+		Category category=categoryRepository.findById(id)
+				.orElseThrow(()->new RuntimeException("Not Found category."));//burayada ozel exceptıon gelıcek.verıtababında bu idlı yok dıye
+		
+		String newName=updateCategory.getName().trim().toLowerCase();
+		
+		if(categoryRepository.existsByNameIgnoreCase(newName) && !category.getName().trim().equalsIgnoreCase(newName)) {
+              //Eğer bu isim veritabanında varsa AMA benim şu an elimde tuttuğum nesnenin eski ismiyle aynı değilse, o zaman bu isim başka birine aittir, hata ver!
+				throw new RuntimeException("Category already esists by this name.");
+				//TODO:ozel exception fırlat bu ada sahıp var dıye
+			
+		}
+		
+		
+		category.setName(updateCategory.getName());
+		Category dbCategory=categoryRepository.save(category);
+		
+		DtoCategoryShortResponse response=new DtoCategoryShortResponse();
+		BeanUtils.copyProperties(dbCategory, response);
+		return response;
 	}
 
 }

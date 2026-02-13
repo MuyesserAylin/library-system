@@ -17,6 +17,11 @@ public interface ICategoryRepository extends JpaRepository<Category,Long> {
 	@Query("select c  from Category c LEFT JOIN FETCH c.books where c.id=:id")
 	Optional<Category> findCategoryWithBooks(@Param(value="id")Long id);
 	
+	//JPA otomatık olarak exists ıle true/false odner ByName DBDEKİ name kolonuna bakar.
+	boolean existsByNameIgnoreCase(String name);
+	
+	List<Category> findByOrderByNameAsc();
+	
 	
 
 }
