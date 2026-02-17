@@ -98,10 +98,7 @@ public class CategoryServiceImpl implements ICategoryService{
 		
 		category.setName(updateCategory.getName());
 		Category dbCategory=categoryRepository.save(category);
-		
-		DtoCategoryShortResponse response=new DtoCategoryShortResponse();
-		BeanUtils.copyProperties(dbCategory, response);
-		return response;
+		return categoryMapper.toCategoryShortResponse(dbCategory);
 	}
 
 }

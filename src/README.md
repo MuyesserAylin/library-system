@@ -20,3 +20,15 @@ Category Management API Category modülü için CRUD (Create, Read, Update, Dele
 ![Category CRUD](images/category_save.png)
 
 Category için save işlemi Postman ile test edildi.
+
+Neler Yapıldı?
+
+İş Mantığı (Business Logic): AuthorServiceImpl geliştirilerek yazar kayıt süreci tamamlandı.
+
+Veri Temizliği (Normalization): Kullanıcıdan gelen isim ve soyisim verileri trim() ve toLowerCase() metodlarıyla normalize edildi. Böylece veritabanında gereksiz boşlukların ve büyük/küçük harf karmaşasının önüne geçildi.
+
+Mükerrer Kayıt Kontrolü: existsByFirstNameIgnoreCaseAndLastNameIgnoreCase kullanılarak, aynı isim ve soyisimle ikinci bir yazarın kaydedilmesi engellendi.
+
+MapStruct Entegrasyonu: DTO ve Entity dönüşümleri için MapStruct kullanıldı. authorName alanı, firstName ve lastName alanları birleştirilerek dinamik bir şekilde oluşturuldu.
+
+![Author save](images/Author_save.png)
