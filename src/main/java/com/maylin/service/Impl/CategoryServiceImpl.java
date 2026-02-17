@@ -12,15 +12,20 @@ import com.maylin.dto.DtoBookShortResponse;
 import com.maylin.dto.DtoCategoryRequest;
 import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.mapper.ICategoryMapper;
 import com.maylin.model.Book;
 import com.maylin.model.Category;
 import com.maylin.repository.ICategoryRepository;
 import com.maylin.service.ICategoryService;
+
+import lombok.RequiredArgsConstructor;
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements ICategoryService{
 
-	@Autowired
-	private ICategoryRepository categoryRepository;
+	
+	private final ICategoryRepository categoryRepository;
+	private final ICategoryMapper categoryMapper;
 	
 	@Override
 	public DtoCategoryResponse saveCategory(DtoCategoryRequest request) {
@@ -31,46 +36,22 @@ public class CategoryServiceImpl implements ICategoryService{
 			throw new RuntimeException("This category allready exists in system.");
 			//TODO:Bu adda category var hatası fırlat.
 		}
-		Category newCategory=new Category();
-		BeanUtils.copyProperties(request, newCategory);
+		Category newCategory=categoryMapper.toEntity(request);
 		Category dbCategory=categoryRepository.save(newCategory);
-		DtoCategoryResponse response=new DtoCategoryResponse();
-		if(dbCategory!=null) {
-			BeanUtils.copyProperties(dbCategory, response);
-
-		}
-		return response;
+	
+		return categoryMapper.toCategoryResponse(dbCategory);
 	}
 
 	@Override
 	public DtoCategoryResponse getCategoryById(Long id) {
 		
 	 Optional<Category> optional=categoryRepository.findCategoryWithBooks(id);
-	  DtoCategoryResponse  response=new DtoCategoryResponse();
-	  
+	 
 	if(optional.isPresent()) {
-		List<DtoBookShortResponse> responseBookList=new ArrayList<>();
-		Category dbCategory=optional.get();
-		BeanUtils.copyProperties(dbCategory, response);
 		
-		if(dbCategory.getBooks()!=null  && !dbCategory.getBooks().isEmpty()) {
-			 
-
-			for (Book dbBook :dbCategory.getBooks()) {
-				
-				DtoBookShortResponse responseBook=new DtoBookShortResponse();
-				BeanUtils.copyProperties(dbBook, responseBook);
-				
-				if(dbBook.getAuthor()!=null && !dbBook.getAuthor().getFirstName().isEmpty() && !dbBook.getAuthor().getLastName().isEmpty() ) {
-					String fullName=dbBook.getAuthor().getFirstName() +" "+dbBook.getAuthor().getLastName();
-					responseBook.setAuthorName(fullName);
-					
-				}
-				responseBookList.add(responseBook);
-			}
-		}
-		response.setBooks(responseBookList);
-		return response;
+		Category dbCategory=optional.get();
+		return categoryMapper.toCategoryResponse(dbCategory);
+		
 	}else {
 		return null;
 		//TODO:exception fılratıcak aranılan categoru dbde yok.sımdılık null gıtsın
@@ -80,20 +61,8 @@ public class CategoryServiceImpl implements ICategoryService{
 
 	@Override
 	public List<DtoCategoryShortResponse> getAllCategories() {
-		
-		List<Category> listCategories=categoryRepository.findByOrderByNameAsc();
-		List<DtoCategoryShortResponse> listDtoCategories=new ArrayList<>();
-		
-		
-		for(Category dbCategory : listCategories) {
-				
-				DtoCategoryShortResponse dtoResponse=new DtoCategoryShortResponse();
-				BeanUtils.copyProperties(dbCategory, dtoResponse);
-				
-				listDtoCategories.add(dtoResponse);
-			 
-		}
-		return listDtoCategories;	
+		List<Category> allCategories=categoryRepository.findByOrderByNameAsc();
+		return categoryMapper.toCategoryShortResponseList(allCategories);	
 		
 	}
 
