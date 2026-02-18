@@ -1,6 +1,10 @@
 package com.maylin.controller.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +30,24 @@ public class AuthorControllerImpl  implements IAuthorController{
 	public DtoAuthorResponse saveAuthor(@RequestBody DtoAuthorRequest request) {
 		
 		return authorService.saveAuthor(request);
-		
 	}
+
+	
+	@Override
+	@GetMapping(path="/list")
+	public List<DtoAuthorResponse> getAllAuthors() {
+		return authorService.getAllAuthors();
+	}
+
+
+	@Override
+	@GetMapping(path="/list/{id}")
+	public DtoAuthorResponse getAuthorById(@PathVariable("id")Long id) {
+		// TODO Auto-generated method stub
+		return authorService.getAuthorById(id);
+	}
+	
+	
 	
 	
 	

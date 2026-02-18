@@ -17,13 +17,15 @@ public interface IAuthorMapper {
 	
 	Author toEntity(DtoAuthorRequest request);
 	
+	List<DtoAuthorResponse> toDtoList(List<Author> authors);
+	
 	@Mapping(target="authorName",expression="java(combineAuthorName(author))")
 	DtoAuthorResponse toDtoAuthorResponse(Author author);
 	
 	default String  combineAuthorName(Author author) {
 		
 		if(author==null) {
-			return "";	
+			return "Unknown Author";	
 		}
 		String fName = (author.getFirstName() != null) ? author.getFirstName() : "";
 	    String lName = (author.getLastName() != null) ? author.getLastName() : "";

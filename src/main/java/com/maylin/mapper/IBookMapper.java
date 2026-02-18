@@ -22,7 +22,7 @@ public interface IBookMapper {
 	default String combineAuthorName(Book book) {
 		
 		if(book==null  ||  book.getAuthor()==null) {
-			return "";
+			return "Unknown Author";
 		}
 		
 		String firstName=book.getAuthor().getFirstName();

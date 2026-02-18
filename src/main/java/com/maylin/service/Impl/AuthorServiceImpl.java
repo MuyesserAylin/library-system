@@ -1,5 +1,8 @@
 package com.maylin.service.Impl;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +39,27 @@ public class AuthorServiceImpl implements IAuthorService {
 	
 		return authorMapper.toDtoAuthorResponse(dbAuthor);
 	}
+
+	@Override
+	public List<DtoAuthorResponse> getAllAuthors() {
+		List<Author> authors=authorRepository.getAllAuthors();
+		
+		return authorMapper.toDtoList(authors);
+		
+		
+	}
+	
+	@Override
+	public DtoAuthorResponse getAuthorById(Long id) {
+		
+		 Author author=authorRepository.findAuthorWithBooks(id)
+				.orElseThrow(() -> new RuntimeException("Bu idye sahıp yazar yok"));
+		//TODO:Özel exception fırlat.
+		 
+		 return authorMapper.toDtoAuthorResponse(author);
+		 
+	}
+	
+	
 
 }
