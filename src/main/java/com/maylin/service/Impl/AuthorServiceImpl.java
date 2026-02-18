@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoAuthorRequest;
 import com.maylin.dto.DtoAuthorResponse;
+import com.maylin.dto.DtoAuthorUpdate;
 import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.repository.IAuthorRepository;
@@ -52,14 +53,50 @@ public class AuthorServiceImpl implements IAuthorService {
 	@Override
 	public DtoAuthorResponse getAuthorById(Long id) {
 		
-		 Author author=authorRepository.findAuthorWithBooks(id)
-				.orElseThrow(() -> new RuntimeException("Bu idye sahıp yazar yok"));
-		//TODO:Özel exception fırlat.
-		 
+		 Author author=findAuthorById(id);
 		 return authorMapper.toDtoAuthorResponse(author);
 		 
 	}
+
+	@Override
+	public void deleteAuthor(Long id) {
+		
+		Author author=findAuthorById(id);
+		
+		if(!author.getBooks().isEmpty()) {
+			throw new RuntimeException("Silinmek istenen yazarın kıtapları var once onları siliniz.");	
+		}
+		
+		authorRepository.deleteById(id);
+	}
 	
+	
+
+	/*@Override
+	public DtoAuthorResponse updateAuthor(Long id, DtoAuthorUpdate updateAuthor) {
+		
+		Author author=findAuthorById(id);
+		
+		
+	}*/
+	
+    private Author findAuthorById(Long id) {
+		
+		return authorRepository.findAuthorWithBooks(id)
+				.orElseThrow(() -> new RuntimeException("Bu idye sahip yazar yok."));
+		//TODO:BU İdye sahip author yok dıye ozel exception fırlat.
+		
+      }
+    
+    private String getName(Author author) {
+    	
+    	String fName=author.getFirstName().trim();
+    	String lName=author.getLastName().trim();
+    	
+    	return (fName+" "+lName);
+    			
+    
+    }
 	
 
 }
