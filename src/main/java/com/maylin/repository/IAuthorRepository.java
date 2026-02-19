@@ -21,7 +21,7 @@ public interface IAuthorRepository extends JpaRepository<Author,Long> {
 	Optional<Author> findAuthorWithBooks(@Param("id") Long id);
 
 	
-	
+	Optional<Author> findByFirstNameIgnoreCaseAndLastNameIgnoreCase(String firstName,String lastName);
 	
 	
 	

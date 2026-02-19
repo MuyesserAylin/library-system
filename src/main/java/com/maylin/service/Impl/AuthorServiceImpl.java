@@ -72,13 +72,40 @@ public class AuthorServiceImpl implements IAuthorService {
 	
 	
 
-	/*@Override
+	@Override
 	public DtoAuthorResponse updateAuthor(Long id, DtoAuthorUpdate updateAuthor) {
 		
 		Author author=findAuthorById(id);
 		
+		if(isNotBlank(updateAuthor.getFirstName())) {
+			author.setFirstName(updateAuthor.getFirstName().trim());
+		}
 		
-	}*/
+		if(isNotBlank(updateAuthor.getLastName())) {
+			author.setLastName(updateAuthor.getLastName().trim());
+		}
+		
+		String fName=author.getFirstName();
+		String lName=author.getLastName();
+		
+		Optional<Author> optional=authorRepository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(fName.toLowerCase(),lName.toLowerCase());
+		
+		if(optional.isPresent() && optional.get().getId()!=author.getId()) {
+				throw new RuntimeException("Bu bilgilere sahip yazar var güncelleme yapamıyoruz.");
+				//TODO:Özel exception fırlat
+		}
+		
+		author.setFirstName(fName);
+		author.setLastName(lName);
+		
+		return authorMapper.toDtoAuthorResponse(authorRepository.save(author));
+		
+	}
+	
+	
+	private Boolean isNotBlank(String value) {
+		return value!=null && !value.isBlank();
+	}
 	
     private Author findAuthorById(Long id) {
 		
@@ -88,15 +115,6 @@ public class AuthorServiceImpl implements IAuthorService {
 		
       }
     
-    private String getName(Author author) {
-    	
-    	String fName=author.getFirstName().trim();
-    	String lName=author.getLastName().trim();
-    	
-    	return (fName+" "+lName);
-    			
     
-    }
-	
 
 }
