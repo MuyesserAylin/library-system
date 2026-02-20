@@ -32,3 +32,6 @@ Mükerrer Kayıt Kontrolü: existsByFirstNameIgnoreCaseAndLastNameIgnoreCase kul
 MapStruct Entegrasyonu: DTO ve Entity dönüşümleri için MapStruct kullanıldı. authorName alanı, firstName ve lastName alanları birleştirilerek dinamik bir şekilde oluşturuldu.
 
 ![Author save](images/Author_save.png)
+
+Aşağıdaki görselde, bir üye eklerken email formatına uymayan üyelerinsistem tarafından nasıl engellendiği görülmektedir.
+![Validation1](images/Member_Validaion_Error.png)

@@ -13,6 +13,7 @@ import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.repository.IAuthorRepository;
 import com.maylin.service.IAuthorService;
+import com.maylin.util.StringUtil;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -26,16 +27,16 @@ public class AuthorServiceImpl implements IAuthorService {
 	@Override
 	public DtoAuthorResponse saveAuthor(DtoAuthorRequest request) {
 		
-		String cleanedFirstName=request.getFirstName().trim().toLowerCase();
-		String cleanedLastName=request.getLastName().toLowerCase();
+		String cleanedFirstName=StringUtil.formatName(request.getFirstName());
+		String cleanedLastName=StringUtil.formatLastName(request.getLastName());
 		if(authorRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(cleanedFirstName,cleanedLastName)) {
 			throw new RuntimeException("Bu bilgilere sahip yazar var.");
 			//TODO:Exception fırlatılacak
 		}
 		
 		Author author=authorMapper.toEntity(request);
-		author.setFirstName(author.getFirstName().trim());
-		author.setLastName(author.getLastName().trim());
+		author.setFirstName(cleanedFirstName);
+		author.setLastName(cleanedLastName);
 		Author dbAuthor=authorRepository.save(author);
 	
 		return authorMapper.toDtoAuthorResponse(dbAuthor);

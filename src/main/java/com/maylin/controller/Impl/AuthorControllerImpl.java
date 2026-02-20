@@ -52,7 +52,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 
 	@Override
-	@DeleteMapping(path="/delete({id}")
+	@DeleteMapping(path="/delete/{id}")
 	public void deleteAuthor(@PathVariable("id")Long id) {
 		authorService.deleteAuthor(id);
 		

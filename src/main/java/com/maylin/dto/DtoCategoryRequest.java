@@ -18,7 +18,7 @@ public class DtoCategoryRequest {
 	
 	@NotBlank(message="Category name cannot be blank.")
 	@Size(min=2,max=50 ,message="Category name must be between 2 and 50 characters.")
-	@Pattern(regexp="^[a-zA-Z]+$",message="Category name cannot be that.")
+	@Pattern(regexp="^[a-zA-ZçĞüÜöÖşŞİı\\s-]+$", message="Category name can only contain letters, spaces, and hyphens.")
 	private String name;
 	
 }

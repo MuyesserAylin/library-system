@@ -17,6 +17,7 @@ import com.maylin.model.Book;
 import com.maylin.model.Category;
 import com.maylin.repository.ICategoryRepository;
 import com.maylin.service.ICategoryService;
+import com.maylin.util.StringUtil;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -30,12 +31,14 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public DtoCategoryResponse saveCategory(DtoCategoryRequest request) {
 		
-		String name=request.getName().trim();
-		Boolean exists=categoryRepository.existsByNameIgnoreCase(name);
+		String cleanedName=StringUtil.formatName(request.getName());
+		Boolean exists=categoryRepository.existsByNameIgnoreCase(cleanedName);
 		if(exists) {
 			throw new RuntimeException("This category allready exists in system.");
 			//TODO:Bu adda category var hatası fırlat.
 		}
+		
+		request.setName(cleanedName);
 		Category newCategory=categoryMapper.toEntity(request);
 		Category dbCategory=categoryRepository.save(newCategory);
 	
