@@ -1,26 +1,20 @@
 package com.maylin.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DtoMemberResponse {
+public class DtoMemberShortResponse {
 	
 	private Long id;
 	
-	private String firstName;
-	
-	private String lastName;
+	private String memberName;
 	
 	private String email;
-	
-	private List<DtoLoanShortResponse> loans=new ArrayList<>();
 
 }

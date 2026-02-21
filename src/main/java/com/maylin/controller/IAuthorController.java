@@ -7,6 +7,7 @@ import com.maylin.dto.DtoAuthorResponse;
 import com.maylin.dto.DtoAuthorUpdate;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 public interface IAuthorController {
 	
@@ -14,9 +15,9 @@ public interface IAuthorController {
 	
 	public List<DtoAuthorResponse> getAllAuthors();
 	
-	public DtoAuthorResponse getAuthorById(Long id);
+	public DtoAuthorResponse getAuthorById(@Min(value=1,message="Category ID must be at least 1.")Long id);
 	
-	public void deleteAuthor(Long id);
+	public void deleteAuthor(@Min(value=1,message="Category ID must be at least 1.")Long id);
 	
-	public DtoAuthorResponse updateAuthor(Long id,DtoAuthorUpdate updateAuthor);
+	public DtoAuthorResponse updateAuthor(@Min(value=1,message="Category ID must be at least 1.")Long id,@Valid DtoAuthorUpdate updateAuthor);
 }

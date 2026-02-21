@@ -17,8 +17,8 @@ public interface ICategoryController {
 	
 	public List<DtoCategoryShortResponse> getAllCategories();
 	
-	public void deleteCategory(Long id);
+	public void deleteCategory(@Min(value=1,message="Category ID must be at least 1.")Long id);
 	
-	public DtoCategoryShortResponse updateCategory(Long id, @Valid DtoCategoryRequest updateCategory);
+	public DtoCategoryShortResponse updateCategory(@Min(value=1, message="Category ID must be at least 1.")Long id, @Valid DtoCategoryRequest updateCategory);
 	
 }

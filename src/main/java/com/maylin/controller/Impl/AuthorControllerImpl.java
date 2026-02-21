@@ -3,6 +3,7 @@ package com.maylin.controller.Impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,9 +21,11 @@ import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.service.IAuthorService;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(path="/rest/api/author")
+@Validated
 public class AuthorControllerImpl  implements IAuthorController{
 	
 	@Autowired
@@ -45,7 +48,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@GetMapping(path="/list/{id}")
-	public DtoAuthorResponse getAuthorById(@PathVariable("id")Long id) {
+	public DtoAuthorResponse getAuthorById(@PathVariable("id") @Min(1) Long id) {
 		// TODO Auto-generated method stub
 		return authorService.getAuthorById(id);
 	}

@@ -44,8 +44,8 @@ public class BookItem {
 	@Enumerated(EnumType.STRING)
 	private Status status=Status.AVAILABLE;
 	
-	@ManyToOne
-	@JoinColumn(name="book_id",referencedColumnName = "id")
+	@ManyToOne(optional=false)
+	@JoinColumn(name="book_id",referencedColumnName = "id",nullable=false)
 	private Book book;
 	
 	@OneToMany(mappedBy="bookItem")
