@@ -1,12 +1,14 @@
 package com.maylin.service.Impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoMemberRequest;
 import com.maylin.dto.DtoMemberResponse;
 import com.maylin.dto.DtoMemberShortResponse;
+import com.maylin.dto.DtoMemberUpdate;
 import com.maylin.mapper.IMemberMapper;
 import com.maylin.model.Member;
 import com.maylin.repository.IMemberRepository;
@@ -46,7 +48,7 @@ public class MemberServiceImpl  implements IMemberService{
 	@Override
 	public DtoMemberResponse getMemberById(Long id) {
 		
-		Member member=findMember(id);
+		Member member=findMemberById(id);
 		//TODO:Kayıylı Member bulunamadı diye exception fırlat.
 		
 		return memberMapper.toDtoMemberResponse(member);
@@ -60,7 +62,7 @@ public class MemberServiceImpl  implements IMemberService{
 
 	@Override
 	public void deleteMemberById(Long id) {
-		Member member=findMember(id);
+		Member member=findMemberById(id);
 		
 		boolean hasActiveLoan=member.getLoans().stream()
 				.anyMatch(loan ->loan.getReturnDate()==null);
@@ -75,7 +77,48 @@ public class MemberServiceImpl  implements IMemberService{
 				
 	}
 	
-	private Member findMember(Long id) {
+
+	@Override
+	public DtoMemberShortResponse updateMember(Long id, DtoMemberUpdate updateMember) {
+		
+		Member member=findMemberById(id);
+		String fName=member.getFirstName();
+		String lName=member.getLastName();
+		String email=member.getEmail();
+		
+		if(isNotBlank(updateMember.getFirstName())) {
+			fName=StringUtil.formatName(updateMember.getFirstName());
+		}
+		
+		if(isNotBlank(updateMember.getLastName())) {
+			lName=StringUtil.formatLastName(updateMember.getLastName());
+		}
+		
+		if(isNotBlank(updateMember.getEmail())) {
+			email=StringUtil.formatEmail(updateMember.getEmail());
+			
+			Optional<Member> optional=memberRepository.findByEmailIgnoreCase(email.toLowerCase());
+			if(optional.isPresent() && optional.get().getId()!=member.getId()) {
+				throw new RuntimeException("Bu emailde kayıtlı member var güncelleme yapılamıyoruz.");
+				//TODO:Özel exctption hazırla.
+			}
+		}
+		
+		
+		member.setFirstName(fName);
+		member.setLastName(lName);
+		member.setEmail(email);
+		
+		
+		return memberMapper.toDtoMemberShortResponse(memberRepository.save(member));
+		
+	}
+	
+	private Boolean isNotBlank(String value) {
+		return value!=null && !value.isBlank();
+	}
+	
+	private Member findMemberById(Long id) {
 		return memberRepository.findMemberWithLoans(id)
 				.orElseThrow(()->new RuntimeException("Kayıtlı member bulunamadı."));
 		//TODO:Kayıtlı exception bulunamadı dıye ozel exceptıon fırlat

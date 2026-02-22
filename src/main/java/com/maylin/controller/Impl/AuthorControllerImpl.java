@@ -25,11 +25,11 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(path="/rest/api/author")
+@RequiredArgsConstructor
 @Validated
 public class AuthorControllerImpl  implements IAuthorController{
 	
-	@Autowired
-	private IAuthorService authorService;
+	private final IAuthorService authorService;
 
 	@Override
 	@PostMapping(path="/save")
@@ -48,7 +48,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@GetMapping(path="/list/{id}")
-	public DtoAuthorResponse getAuthorById(@PathVariable("id") @Min(1) Long id) {
+	public DtoAuthorResponse getAuthorById(@PathVariable("id") Long id) {
 		// TODO Auto-generated method stub
 		return authorService.getAuthorById(id);
 	}

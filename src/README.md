@@ -35,3 +35,6 @@ MapStruct Entegrasyonu: DTO ve Entity dönüşümleri için MapStruct kullanıld
 
 Aşağıdaki görselde, bir üye eklerken email formatına uymayan üyelerinsistem tarafından nasıl engellendiği görülmektedir.
 ![Validation1](images/Member_Validaion_Error.png)
+
+Projede kurulan exception handling mimarisini göstermektedir. Var olan bir yazar tekrar eklenmeye çalışıldığında sistem 409 Conflict HTTP kodu ile standart bir hata yanıtı döndürmektedir. Yanıt içeriğinde errorCode, message, path ve timestamp bilgileri yer almaktadır. Bu yapı BaseException, ErrorCode enum ve GlobalExceptionHandler kullanılarak kurulmuştur.
+![Excepiton1](images/excepiton_test1.png)

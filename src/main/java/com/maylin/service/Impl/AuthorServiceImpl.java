@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoAuthorRequest;
 import com.maylin.dto.DtoAuthorResponse;
 import com.maylin.dto.DtoAuthorUpdate;
+import com.maylin.enums.ErrorCode;
+import com.maylin.exception.BaseException;
 import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.repository.IAuthorRepository;
@@ -30,8 +33,8 @@ public class AuthorServiceImpl implements IAuthorService {
 		String cleanedFirstName=StringUtil.formatName(request.getFirstName());
 		String cleanedLastName=StringUtil.formatLastName(request.getLastName());
 		if(authorRepository.existsByFirstNameIgnoreCaseAndLastNameIgnoreCase(cleanedFirstName,cleanedLastName)) {
-			throw new RuntimeException("Bu bilgilere sahip yazar var.");
-			//TODO:Exception fırlatılacak
+			throw new BaseException(ErrorCode.AUTHOR_ALREADY_EXISTS,HttpStatus.CONFLICT);
+			
 		}
 		
 		Author author=authorMapper.toEntity(request);
@@ -77,17 +80,18 @@ public class AuthorServiceImpl implements IAuthorService {
 	public DtoAuthorResponse updateAuthor(Long id, DtoAuthorUpdate updateAuthor) {
 		
 		Author author=findAuthorById(id);
+		String fName=author.getFirstName();
+		String lName=author.getLastName();
+		
 		
 		if(isNotBlank(updateAuthor.getFirstName())) {
-			author.setFirstName(updateAuthor.getFirstName().trim());
+			fName=StringUtil.formatName(updateAuthor.getFirstName());
 		}
 		
 		if(isNotBlank(updateAuthor.getLastName())) {
-			author.setLastName(updateAuthor.getLastName().trim());
+			lName=StringUtil.formatLastName(updateAuthor.getLastName());
 		}
 		
-		String fName=author.getFirstName();
-		String lName=author.getLastName();
 		
 		Optional<Author> optional=authorRepository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(fName.toLowerCase(),lName.toLowerCase());
 		

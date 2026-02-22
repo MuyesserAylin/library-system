@@ -18,5 +18,6 @@ public interface IMemberRepository extends JpaRepository<Member,Long> {
 	@Query("SELECT m FROM Member m LEFT JOIN FETCH m.loans l LEFT JOIN FETCH l.bookItem bi LEFT JOIN FETCH  bi.book b where m.id=:id")
 	Optional<Member> findMemberWithLoans(@Param("id")Long id);
 	
+	Optional<Member> findByEmailIgnoreCase(String email);
 
 }
