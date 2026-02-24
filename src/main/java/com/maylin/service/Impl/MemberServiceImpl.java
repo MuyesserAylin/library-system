@@ -3,12 +3,15 @@ package com.maylin.service.Impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoMemberRequest;
 import com.maylin.dto.DtoMemberResponse;
 import com.maylin.dto.DtoMemberShortResponse;
 import com.maylin.dto.DtoMemberUpdate;
+import com.maylin.enums.ErrorCode;
+import com.maylin.exception.BaseException;
 import com.maylin.mapper.IMemberMapper;
 import com.maylin.model.Member;
 import com.maylin.repository.IMemberRepository;
@@ -31,7 +34,7 @@ public class MemberServiceImpl  implements IMemberService{
 		
 		boolean exists=memberRepository.existsByEmailIgnoreCase(cleanedEmail);
 		if(exists) {
-			throw new RuntimeException("Bu email adresi zaten kullanımda.");
+			throw new BaseException(ErrorCode.EMAIL_ALREADY_EXISTS,HttpStatus.CONFLICT);
 		}
 		
 		Member member=new Member();
@@ -49,7 +52,6 @@ public class MemberServiceImpl  implements IMemberService{
 	public DtoMemberResponse getMemberById(Long id) {
 		
 		Member member=findMemberById(id);
-		//TODO:Kayıylı Member bulunamadı diye exception fırlat.
 		
 		return memberMapper.toDtoMemberResponse(member);
 	}
@@ -68,8 +70,7 @@ public class MemberServiceImpl  implements IMemberService{
 				.anyMatch(loan ->loan.getReturnDate()==null);
 		
 		if(hasActiveLoan) {
-			throw new RuntimeException("Memberin aktif kitap kayıdı var silinemez.");
-			//TODO:Özel execption fırlat .Aktif kitap kaydı var dıye
+			throw new BaseException(ErrorCode.MEMBER_HAS_ACTIVE_LOAN,HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		
 		memberRepository.deleteById(id);
@@ -99,8 +100,7 @@ public class MemberServiceImpl  implements IMemberService{
 			
 			Optional<Member> optional=memberRepository.findByEmailIgnoreCase(email.toLowerCase());
 			if(optional.isPresent() && optional.get().getId()!=member.getId()) {
-				throw new RuntimeException("Bu emailde kayıtlı member var güncelleme yapılamıyoruz.");
-				//TODO:Özel exctption hazırla.
+				throw new BaseException(ErrorCode.EMAIL_ALREADY_EXISTS,HttpStatus.CONFLICT);
 			}
 		}
 		
@@ -120,8 +120,8 @@ public class MemberServiceImpl  implements IMemberService{
 	
 	private Member findMemberById(Long id) {
 		return memberRepository.findMemberWithLoans(id)
-				.orElseThrow(()->new RuntimeException("Kayıtlı member bulunamadı."));
-		//TODO:Kayıtlı exception bulunamadı dıye ozel exceptıon fırlat
+				.orElseThrow(()->new BaseException(ErrorCode.MEMBER_NOT_FOUND,HttpStatus.NOT_FOUND));
+	
 	}
 
 }

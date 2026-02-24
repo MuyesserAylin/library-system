@@ -6,12 +6,16 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoBookShortResponse;
 import com.maylin.dto.DtoCategoryRequest;
 import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.dto.DtoCategoryUpdate;
+import com.maylin.enums.ErrorCode;
+import com.maylin.exception.BaseException;
 import com.maylin.mapper.ICategoryMapper;
 import com.maylin.model.Book;
 import com.maylin.model.Category;
@@ -34,8 +38,7 @@ public class CategoryServiceImpl implements ICategoryService{
 		String cleanedName=StringUtil.formatName(request.getName());
 		Boolean exists=categoryRepository.existsByNameIgnoreCase(cleanedName);
 		if(exists) {
-			throw new RuntimeException("This category allready exists in system.");
-			//TODO:Bu adda category var hatası fırlat.
+			throw new BaseException(ErrorCode.CATEGORY_ALREADY_EXISTS,HttpStatus.CONFLICT);
 		}
 		
 		request.setName(cleanedName);
@@ -48,18 +51,10 @@ public class CategoryServiceImpl implements ICategoryService{
 	@Override
 	public DtoCategoryResponse getCategoryById(Long id) {
 		
-	 Optional<Category> optional=categoryRepository.findCategoryWithBooks(id);
+	 Category category=findCategoryById(id);
 	 
-	if(optional.isPresent()) {
+		return categoryMapper.toCategoryResponse(category);
 		
-		Category dbCategory=optional.get();
-		return categoryMapper.toCategoryResponse(dbCategory);
-		
-	}else {
-		return null;
-		//TODO:exception fılratıcak aranılan categoru dbde yok.sımdılık null gıtsın
-	}
-	 
 	}
 
 	@Override
@@ -71,37 +66,42 @@ public class CategoryServiceImpl implements ICategoryService{
 
 	@Override
 	public void deleteCategory(Long id) {
-		Category category=categoryRepository.findById(id)
-				.orElseThrow(()->new RuntimeException("Not found category."));//burayada ozel exception fırlatcam
-		
+		Category category=findCategoryById(id);
 		List<Book> books=category.getBooks();
 		if(books!=null && !books.isEmpty()) {
-			
-			//TODO: exception fırlat bu categoryının kıtapları var once o kıtapları hallet sonra sıl dıye
-			throw new RuntimeException("Category include books.Not delete!");
+			throw new BaseException(ErrorCode.CATEGORY_HAS_BOOKS,HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		
 		categoryRepository.delete(category);
 	}
 
 	@Override
-	public DtoCategoryShortResponse updateCategory(Long id, DtoCategoryRequest updateCategory) {
-		Category category=categoryRepository.findById(id)
-				.orElseThrow(()->new RuntimeException("Not Found category."));//burayada ozel exceptıon gelıcek.verıtababında bu idlı yok dıye
+	public DtoCategoryShortResponse updateCategory(Long id, DtoCategoryUpdate updateCategory) {
+		Category category=findCategoryById(id);
+		String name=category.getName();
 		
-		String newName=updateCategory.getName().trim().toLowerCase();
+		if(isNotBlank(updateCategory.getName())) {
+			name=StringUtil.formatName(updateCategory.getName());
+		}
 		
-		if(categoryRepository.existsByNameIgnoreCase(newName) && !category.getName().trim().equalsIgnoreCase(newName)) {
-              //Eğer bu isim veritabanında varsa AMA benim şu an elimde tuttuğum nesnenin eski ismiyle aynı değilse, o zaman bu isim başka birine aittir, hata ver!
-				throw new RuntimeException("Category already esists by this name.");
-				//TODO:ozel exception fırlat bu ada sahıp var dıye
+		if(categoryRepository.existsByNameIgnoreCase(name) && !category.getName().equals(name)) {
+             throw new BaseException(ErrorCode.CATEGORY_ALREADY_EXISTS,HttpStatus.CONFLICT);
 			
 		}
 		
 		
-		category.setName(updateCategory.getName());
+		category.setName(name);
 		Category dbCategory=categoryRepository.save(category);
 		return categoryMapper.toCategoryShortResponse(dbCategory);
 	}
 
+	private Category findCategoryById(Long id) {
+		
+		return categoryRepository.findCategoryWithBooks(id)
+				.orElseThrow(()->new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND));
+}
+	
+	private Boolean isNotBlank(String value) {
+		return value!=null && !value.isBlank();
+	}
 }

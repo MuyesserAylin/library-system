@@ -23,7 +23,7 @@ public class DtoMemberUpdate {
 	@Pattern(regexp = "^[a-zA-ZçÇğĞıİöÖşŞüÜ\\s]+$", message = "Lastname cannot be that.")
 	private String lastName;
 	
-	@Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.(com|org|net|gov|edu|tr)(\\.(com|org|net|gov|edu|tr))?$", message = "Wrong email format!")
+	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.(com|org|net|gov|edu|tr)(\\.(com|org|net|gov|edu|tr))?$", message = "Wrong email format!")
 	private String email;
 
 }

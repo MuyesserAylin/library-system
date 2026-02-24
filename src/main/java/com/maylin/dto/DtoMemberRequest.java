@@ -26,7 +26,7 @@ public class DtoMemberRequest {
 	private String lastName;
 	
 	@NotBlank(message="Email cannot be blank.")
-	@Pattern(regexp = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.(com|org|net|gov|edu|tr)(\\.(com|org|net|gov|edu|tr))?$", message = "Wrong email format!")
+	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\\.(com|org|net|gov|edu|tr)(\\.(com|org|net|gov|edu|tr))?$", message = "Wrong email format!")
 	private String email;
 	
 	@NotBlank(message="Password cannot be blank.")

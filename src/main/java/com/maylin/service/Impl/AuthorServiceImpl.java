@@ -68,7 +68,7 @@ public class AuthorServiceImpl implements IAuthorService {
 		Author author=findAuthorById(id);
 		
 		if(!author.getBooks().isEmpty()) {
-			throw new RuntimeException("Silinmek istenen yazarın kıtapları var once onları siliniz.");	
+			throw new BaseException(ErrorCode.AUTHOR_HAS_BOOKS,HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		
 		authorRepository.deleteById(id);
@@ -96,8 +96,7 @@ public class AuthorServiceImpl implements IAuthorService {
 		Optional<Author> optional=authorRepository.findByFirstNameIgnoreCaseAndLastNameIgnoreCase(fName.toLowerCase(),lName.toLowerCase());
 		
 		if(optional.isPresent() && optional.get().getId()!=author.getId()) {
-				throw new RuntimeException("Bu bilgilere sahip yazar var güncelleme yapamıyoruz.");
-				//TODO:Özel exception fırlat
+			throw new BaseException(ErrorCode.AUTHOR_ALREADY_EXISTS,HttpStatus.CONFLICT);
 		}
 		
 		author.setFirstName(fName);
@@ -115,8 +114,7 @@ public class AuthorServiceImpl implements IAuthorService {
     private Author findAuthorById(Long id) {
 		
 		return authorRepository.findAuthorWithBooks(id)
-				.orElseThrow(() -> new RuntimeException("Bu idye sahip yazar yok."));
-		//TODO:BU İdye sahip author yok dıye ozel exception fırlat.
+				.orElseThrow(() -> new BaseException(ErrorCode.AUTHOR_NOT_FOUND,HttpStatus.NOT_FOUND));
 		
       }
     

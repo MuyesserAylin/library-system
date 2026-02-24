@@ -16,6 +16,7 @@ import com.maylin.controller.ICategoryController;
 import com.maylin.dto.DtoCategoryRequest;
 import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.dto.DtoCategoryUpdate;
 import com.maylin.service.ICategoryService;
 
 import jakarta.validation.Valid;
@@ -58,16 +59,19 @@ public class CategoryControllerImpl implements ICategoryController{
 	public void deleteCategory(@PathVariable("id") Long id) {
 		categoryService.deleteCategory(id);
 	}
-	
+
 	@Override
 	@PutMapping(path="/update/{id}")
-	public DtoCategoryShortResponse updateCategory(@PathVariable("id") Long id,@RequestBody DtoCategoryRequest updateCategory) {
-		
-		//TODO: updateCategory ıcındekı valıdayonlar uymazsa exceptiom
-		//TODO: Kullanıcı hıc verı gondermezzse  HttpMessageNotReadableException
-		return categoryService.updateCategory(id,updateCategory);
-		
+	public DtoCategoryShortResponse updateCategory(@PathVariable("id")Long id,
+			@RequestBody DtoCategoryUpdate updateCategory) {
+		// TODO Auto-generated method stub
+		return categoryService.updateCategory(id, updateCategory);
 	}
+
+	
+	
+	
+	
 	
 	
 	

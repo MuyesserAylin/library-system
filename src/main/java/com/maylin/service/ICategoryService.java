@@ -5,6 +5,7 @@ import java.util.List;
 import com.maylin.dto.DtoCategoryRequest;
 import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.dto.DtoCategoryUpdate;
 
 public interface ICategoryService {
 	
@@ -16,6 +17,6 @@ public interface ICategoryService {
 	
 	public void deleteCategory(Long id);
 	
-	public DtoCategoryShortResponse updateCategory(Long id,DtoCategoryRequest updateCategory);
+	public DtoCategoryShortResponse updateCategory(Long id,DtoCategoryUpdate updateCategory);
 
 }
