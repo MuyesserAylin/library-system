@@ -1,0 +1,88 @@
+package com.maylin.service.Impl;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import com.maylin.dto.DtoAuthorSummary;
+import com.maylin.dto.DtoBookRequest;
+import com.maylin.dto.DtoBookResponse;
+import com.maylin.dto.DtoCategoryShortResponse;
+import com.maylin.enums.ErrorCode;
+import com.maylin.exception.BaseException;
+import com.maylin.mapper.IAuthorMapper;
+import com.maylin.mapper.IBookMapper;
+import com.maylin.mapper.ICategoryMapper;
+import com.maylin.model.Author;
+import com.maylin.model.Book;
+import com.maylin.model.Category;
+import com.maylin.repository.IAuthorRepository;
+import com.maylin.repository.IBookRepository;
+import com.maylin.repository.ICategoryRepository;
+import com.maylin.service.IBookService;
+
+import lombok.RequiredArgsConstructor;
+@Service
+@RequiredArgsConstructor
+public class BookServiceImpl implements IBookService {
+	
+	private final IBookRepository bookRepository;
+	private final IAuthorRepository authorRepository;
+	private final ICategoryRepository categoryRepository;
+	private final IBookMapper bookMapper;
+	private final ICategoryMapper categoryMapper;
+	private final IAuthorMapper authorMapper;
+
+	@Override
+	public DtoBookResponse saveBook(DtoBookRequest request) {
+		
+		boolean exists=bookRepository.existsByISBN(request.getISBN());
+		if(exists) {
+			throw new BaseException(ErrorCode.BOOK_ALREADY_EXISTS,HttpStatus.CONFLICT);
+		}
+		Author author=authorRepository.findById(request.getAuthorId())
+				.orElseThrow(()->new BaseException(ErrorCode.AUTHOR_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+		//dbde buldugumuz categorıler
+		List<Category> foundCategories=categoryRepository.findAllById(request.getCategoryIds());
+		
+		if(foundCategories.isEmpty()) {
+			throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND);
+		}
+		
+		Set<Long> requestIds=request.getCategoryIds();//kullanıcın  gonderıdgı idler
+		
+		if(requestIds.size()>foundCategories.size()) {
+			Set<Long> missingIds=new HashSet<Long>(request.getCategoryIds());
+			Set<Long> foundIds=foundCategories.stream()
+					.map(Category::getId).collect(Collectors.toSet());
+			
+			missingIds.removeAll(foundIds);
+			//missingIds kullanıcının gonderıgı ama verıtabanında bulamamdıgımız idleri tutar
+			
+			throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND,missingIds);
+			
+			
+		}
+		
+	
+		Book book= bookMapper.toEntity(request);
+		book.setAuthor(author);
+		book.setCategories(foundCategories);
+		Book savedBook=bookRepository.save(book);
+		
+		return bookMapper.toDtoBookResponse(savedBook);
+		 
+		 
+		 
+		
+		
+	}
+	
+
+}

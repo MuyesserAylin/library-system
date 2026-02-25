@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +20,8 @@ import com.maylin.enums.ErrorCode;
 import com.maylin.exception.BaseException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,7 +30,7 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(BaseException.class)
 	public 	 ResponseEntity<ApiResponse<Object>> handleBaseException(BaseException ex,HttpServletRequest request) {
-	  return 	ResponseEntity.status(ex.getStatusCode()).body(createApiResponse(ex.getStatusCode(),ex.getErrorCode(),null,request.getRequestURI()));
+	  return 	ResponseEntity.status(ex.getStatusCode()).body(createApiResponse(ex.getStatusCode(),ex.getErrorCode(),ex.getErrorData(),request.getRequestURI()));
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
@@ -46,6 +50,31 @@ public class GlobalExceptionHandler {
 				
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createApiResponse(HttpStatus.BAD_REQUEST.value(),ErrorCode.VALIDATION_ERROR,errors,request.getRequestURI()));
 		
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<ApiResponse<Object>> handleConstraintViolatonException(ConstraintViolationException ex,HttpServletRequest request){
+		
+		Map<String,List<String>> errors=new HashMap();
+		
+		for(ConstraintViolation<?> violation :ex.getConstraintViolations()) {
+			String  field=violation.getPropertyPath().toString();
+			String message=violation.getMessage();
+			
+			if(!errors.containsKey(field)) {
+				errors.put(field,new ArrayList());
+			}
+			
+			errors.get(field).add(message);
+		}
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createApiResponse(HttpStatus.BAD_REQUEST.value(),ErrorCode.VALIDATION_ERROR,errors,request.getRequestURI()));
+	}
+	
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,HttpServletRequest request){
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(createApiResponse(HttpStatus.BAD_REQUEST.value(),ErrorCode.HTTP_MESSAGE_NOT_READABLE,null,request.getRequestURI()));
 	}
 	
 	private <T> ApiResponse<T> createApiResponse(int statusCode,ErrorCode errorCode,T data,String path){
