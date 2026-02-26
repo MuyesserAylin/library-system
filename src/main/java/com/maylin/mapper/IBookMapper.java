@@ -11,15 +11,17 @@ import com.maylin.dto.DtoBookResponse;
 import com.maylin.dto.DtoBookShortResponse;
 import com.maylin.model.Book;
 
-@Mapper(componentModel = "spring",uses= {IAuthorMapper.class,ICategoryMapper.class})
+@Mapper(componentModel = "spring")
 public interface IBookMapper {
 	
 	@Mapping(target="authorName",expression= "java(combineAuthorName(book))")
 	DtoBookShortResponse toBookShortResponse(Book book);
+	List<DtoBookShortResponse> toBookShortList(List<Book> books);
 	
 	DtoBookForAuthor toDtoBookForAuthor(Book book);
 	
     Book toEntity(DtoBookRequest request);
+    
     
     DtoBookResponse toDtoBookResponse(Book book);
 	

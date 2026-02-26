@@ -9,13 +9,13 @@ import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.model.Category;
 
-@Mapper(componentModel="spring",uses = {IBookMapper.class})
+@Mapper(componentModel="spring")
 public interface ICategoryMapper {
 	
 	//Donus tipi || func adı   || kaynak
 	Category toEntity(DtoCategoryRequest request);
 	
-	DtoCategoryResponse toCategoryResponse(Category category);
+	DtoCategoryResponse toDtoCategoryResponse(Category category);
 	
 	DtoCategoryShortResponse toCategoryShortResponse(Category category);
 	

@@ -23,5 +23,7 @@ public class DtoBookResponse {
 	private DtoAuthorSummary author;
 	
 	private List<DtoCategoryShortResponse> categories=new ArrayList<DtoCategoryShortResponse>();
+	
+	private List<DtoBookItemShortResponse> bookItems=new ArrayList<DtoBookItemShortResponse>();
 
 }

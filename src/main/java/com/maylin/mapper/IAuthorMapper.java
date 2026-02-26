@@ -12,7 +12,7 @@ import com.maylin.dto.DtoBookForAuthor;
 import com.maylin.model.Author;
 import com.maylin.model.Book;
 
-@Mapper(componentModel="spring",uses= {IBookMapper.class})
+@Mapper(componentModel="spring")
 public interface IAuthorMapper {
 	
 	
@@ -21,6 +21,7 @@ public interface IAuthorMapper {
 	List<DtoAuthorResponse> toDtoList(List<Author> authors);
 	
 	@Mapping(target="authorName",expression="java(combineAuthorName(author))")
+	@Mapping(target="books",ignore=true)
 	DtoAuthorResponse toDtoAuthorResponse(Author author);
 	
 	@Mapping(target="authorName",expression="java(combineAuthorName(author))")

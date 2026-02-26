@@ -16,6 +16,7 @@ import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.enums.ErrorCode;
 import com.maylin.exception.BaseException;
 import com.maylin.mapper.IAuthorMapper;
+import com.maylin.mapper.IBookItemMapper;
 import com.maylin.mapper.IBookMapper;
 import com.maylin.mapper.ICategoryMapper;
 import com.maylin.model.Author;
@@ -25,6 +26,7 @@ import com.maylin.repository.IAuthorRepository;
 import com.maylin.repository.IBookRepository;
 import com.maylin.repository.ICategoryRepository;
 import com.maylin.service.IBookService;
+import com.maylin.util.StringUtil;
 
 import lombok.RequiredArgsConstructor;
 @Service
@@ -37,6 +39,7 @@ public class BookServiceImpl implements IBookService {
 	private final IBookMapper bookMapper;
 	private final ICategoryMapper categoryMapper;
 	private final IAuthorMapper authorMapper;
+	private final IBookItemMapper bookItemMapper;
 
 	@Override
 	public DtoBookResponse saveBook(DtoBookRequest request) {
@@ -51,9 +54,6 @@ public class BookServiceImpl implements IBookService {
 		//dbde buldugumuz categorıler
 		List<Category> foundCategories=categoryRepository.findAllById(request.getCategoryIds());
 		
-		if(foundCategories.isEmpty()) {
-			throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND);
-		}
 		
 		Set<Long> requestIds=request.getCategoryIds();//kullanıcın  gonderıdgı idler
 		
@@ -67,22 +67,41 @@ public class BookServiceImpl implements IBookService {
 			
 			throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND,missingIds);
 			
-			
 		}
 		
-	
 		Book book= bookMapper.toEntity(request);
+		book.setTitle(StringUtil.formatTitle(request.getTitle()));
+		book.setISBN(StringUtil.formatISBN(request.getISBN()));
 		book.setAuthor(author);
 		book.setCategories(foundCategories);
 		Book savedBook=bookRepository.save(book);
 		
-		return bookMapper.toDtoBookResponse(savedBook);
-		 
-		 
-		 
-		
+		 return buildBookResponse(savedBook);
 		
 	}
+
+	@Override
+	public DtoBookResponse getBookById(Long id) {
+		
+        Book book=findBookById(id);
+        return buildBookResponse(book);
+        
+	}
+	
+	private Book findBookById(Long id) {
+		return bookRepository.findByIdDetails(id)
+				.orElseThrow(()->new BaseException(ErrorCode.BOKK_NOT_FOUND,HttpStatus.NOT_FOUND));
+	}
+	
+	private DtoBookResponse buildBookResponse(Book book) {
+		DtoBookResponse response=bookMapper.toDtoBookResponse(book);
+		response.setAuthor(authorMapper.toDtoAuthorSummary(book.getAuthor()));
+		response.setCategories(categoryMapper.toCategoryShortResponseList(book.getCategories()));
+		response.setBookItems(bookItemMapper.todtoBookShortList(book.getBookItems()));
+		 return response;
+	}
+	
+	
 	
 
 }

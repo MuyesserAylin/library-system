@@ -16,6 +16,7 @@ import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.dto.DtoCategoryUpdate;
 import com.maylin.enums.ErrorCode;
 import com.maylin.exception.BaseException;
+import com.maylin.mapper.IBookMapper;
 import com.maylin.mapper.ICategoryMapper;
 import com.maylin.model.Book;
 import com.maylin.model.Category;
@@ -31,6 +32,7 @@ public class CategoryServiceImpl implements ICategoryService{
 	
 	private final ICategoryRepository categoryRepository;
 	private final ICategoryMapper categoryMapper;
+	private final IBookMapper bookMapper;
 	
 	@Override
 	public DtoCategoryResponse saveCategory(DtoCategoryRequest request) {
@@ -45,7 +47,7 @@ public class CategoryServiceImpl implements ICategoryService{
 		Category newCategory=categoryMapper.toEntity(request);
 		Category dbCategory=categoryRepository.save(newCategory);
 	
-		return categoryMapper.toCategoryResponse(dbCategory);
+		return buildCategoryResponse(dbCategory);
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class CategoryServiceImpl implements ICategoryService{
 		
 	 Category category=findCategoryById(id);
 	 
-		return categoryMapper.toCategoryResponse(category);
+		return buildCategoryResponse(category);
 		
 	}
 
@@ -100,6 +102,15 @@ public class CategoryServiceImpl implements ICategoryService{
 		return categoryRepository.findCategoryWithBooks(id)
 				.orElseThrow(()->new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND));
 }
+	
+	private DtoCategoryResponse buildCategoryResponse(Category category) {
+		
+		DtoCategoryResponse response=categoryMapper.toDtoCategoryResponse(category);
+		response.setBooks(bookMapper.toBookShortList(category.getBooks()));
+		return response;
+		
+		
+	}
 	
 	private Boolean isNotBlank(String value) {
 		return value!=null && !value.isBlank();

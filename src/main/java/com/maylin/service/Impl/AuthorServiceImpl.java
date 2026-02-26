@@ -13,6 +13,7 @@ import com.maylin.dto.DtoAuthorUpdate;
 import com.maylin.enums.ErrorCode;
 import com.maylin.exception.BaseException;
 import com.maylin.mapper.IAuthorMapper;
+import com.maylin.mapper.IBookMapper;
 import com.maylin.model.Author;
 import com.maylin.repository.IAuthorRepository;
 import com.maylin.service.IAuthorService;
@@ -26,6 +27,7 @@ public class AuthorServiceImpl implements IAuthorService {
 	
 	private final IAuthorRepository authorRepository;
 	private final IAuthorMapper authorMapper;
+	private final IBookMapper bookMapper;
 
 	@Override
 	public DtoAuthorResponse saveAuthor(DtoAuthorRequest request) {
@@ -42,15 +44,20 @@ public class AuthorServiceImpl implements IAuthorService {
 		author.setLastName(cleanedLastName);
 		Author dbAuthor=authorRepository.save(author);
 	
-		return authorMapper.toDtoAuthorResponse(dbAuthor);
+	  return buildAuthorResponse(dbAuthor);
 	}
 
 	@Override
 	public List<DtoAuthorResponse> getAllAuthors() {
 		List<Author> authors=authorRepository.getAllAuthors();
 		
-		return authorMapper.toDtoList(authors);
+		List<DtoAuthorResponse> responses= authorMapper.toDtoList(authors);
 		
+		for(int i=0; i<authors.size();i++) {
+			responses.get(i).setBooks(bookMapper.toDtoBookForAuthorList(authors.get(i).getBooks()));
+		}
+		
+		return responses;
 		
 	}
 	
@@ -58,7 +65,7 @@ public class AuthorServiceImpl implements IAuthorService {
 	public DtoAuthorResponse getAuthorById(Long id) {
 		
 		 Author author=findAuthorById(id);
-		 return authorMapper.toDtoAuthorResponse(author);
+		 return buildAuthorResponse(author);
 		 
 	}
 
@@ -101,15 +108,20 @@ public class AuthorServiceImpl implements IAuthorService {
 		
 		author.setFirstName(fName);
 		author.setLastName(lName);
-		
-		return authorMapper.toDtoAuthorResponse(authorRepository.save(author));
-		
+		Author savedAuthor=authorRepository.save(author);
+		return buildAuthorResponse(savedAuthor);
 	}
 	
 	
 	private Boolean isNotBlank(String value) {
 		return value!=null && !value.isBlank();
 	}
+	
+   private DtoAuthorResponse buildAuthorResponse(Author author) {
+	   DtoAuthorResponse response = authorMapper.toDtoAuthorResponse(author);
+	   response.setBooks(bookMapper.toDtoBookForAuthorList(author.getBooks()));
+	   return response;
+   }
 	
     private Author findAuthorById(Long id) {
 		

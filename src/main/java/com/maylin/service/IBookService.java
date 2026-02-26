@@ -8,5 +8,7 @@ import jakarta.validation.Valid;
 public interface IBookService {
 	
 	public DtoBookResponse saveBook(DtoBookRequest request);
+	
+	public DtoBookResponse getBookById(Long id);
 
 }

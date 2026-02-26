@@ -22,4 +22,25 @@ public class StringUtil {
 	
 	}
 	
+	public static String formatISBN(String isbn) {
+	    return isbn.trim().toUpperCase();
+	}
+	
+	public static String formatTitle(String title) {
+	    
+	    title = title.trim();
+	    String[] words = title.split(" ");
+	    StringBuilder result = new StringBuilder();
+	    
+	    for(String word : words) {
+	        if(!word.isEmpty()) {
+	            result.append(word.substring(0,1).toUpperCase())
+	                  .append(word.substring(1).toLowerCase())
+	                  .append(" ");
+	        }
+	    }
+	    
+	    return result.toString().trim();
+	}
+	
 }

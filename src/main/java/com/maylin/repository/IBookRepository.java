@@ -1,6 +1,10 @@
 package com.maylin.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.maylin.model.Book;
@@ -8,5 +12,11 @@ import com.maylin.model.Book;
 public interface IBookRepository extends JpaRepository<Book,Long>{
 	
 	boolean existsByISBN(String isbn);
-
+	
+	@Query("SELECT b FROM Book b " +                
+		       "LEFT JOIN FETCH b.author " +          
+		       "LEFT JOIN FETCH b.categories " +       
+		       "LEFT JOIN FETCH b.bookItems " +       
+		       "WHERE b.id = :id")
+		Optional<Book> findByIdDetails(@Param("id") Long id);
 }
