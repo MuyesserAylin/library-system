@@ -12,7 +12,7 @@ import com.maylin.dto.DtoBookForAuthor;
 import com.maylin.model.Author;
 import com.maylin.model.Book;
 
-@Mapper(componentModel="spring")
+@Mapper(componentModel ="spring")
 public interface IAuthorMapper {
 	
 	

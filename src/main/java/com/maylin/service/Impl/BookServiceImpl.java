@@ -2,6 +2,7 @@ package com.maylin.service.Impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -83,15 +84,34 @@ public class BookServiceImpl implements IBookService {
 	@Override
 	public DtoBookResponse getBookById(Long id) {
 		
-        Book book=findBookById(id);
+        Book book=findBookByIdWithDetails(id);
         return buildBookResponse(book);
         
 	}
 	
-	private Book findBookById(Long id) {
-		return bookRepository.findByIdDetails(id)
-				.orElseThrow(()->new BaseException(ErrorCode.BOKK_NOT_FOUND,HttpStatus.NOT_FOUND));
+	
+	
+	private Book findBookByIdWithDetails(Long id) {
+		Book bookWithCategories=findBookByIdWithCategories(id);
+		
+		Book bookWithItems=bookRepository.findByIdWithBookItems(id)
+				.orElseThrow(()->new BaseException(ErrorCode.BOOK_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+		bookWithCategories.setBookItems(bookWithItems.getBookItems());
+		return bookWithCategories;
+		
 	}
+	
+	
+	private Book findBookByIdWithCategories(Long id) {
+		
+		return bookRepository.findByIdWithCategories(id)
+				.orElseThrow(()->new BaseException(ErrorCode.BOOK_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+	}
+	
+
+
 	
 	private DtoBookResponse buildBookResponse(Book book) {
 		DtoBookResponse response=bookMapper.toDtoBookResponse(book);
@@ -100,6 +120,7 @@ public class BookServiceImpl implements IBookService {
 		response.setBookItems(bookItemMapper.todtoBookShortList(book.getBookItems()));
 		 return response;
 	}
+
 	
 	
 	
