@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoAuthorSummary;
+import com.maylin.dto.DtoBookListResponse;
 import com.maylin.dto.DtoBookRequest;
 import com.maylin.dto.DtoBookResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.enums.ErrorCode;
+import com.maylin.enums.Status;
 import com.maylin.exception.BaseException;
 import com.maylin.mapper.IAuthorMapper;
 import com.maylin.mapper.IBookItemMapper;
@@ -22,6 +24,7 @@ import com.maylin.mapper.IBookMapper;
 import com.maylin.mapper.ICategoryMapper;
 import com.maylin.model.Author;
 import com.maylin.model.Book;
+import com.maylin.model.BookItem;
 import com.maylin.model.Category;
 import com.maylin.repository.IAuthorRepository;
 import com.maylin.repository.IBookRepository;
@@ -89,7 +92,31 @@ public class BookServiceImpl implements IBookService {
         
 	}
 	
+	@Override
+	public List<DtoBookListResponse> getAllBooks() {
+		List<Book> books=bookRepository.findAllWithCategories();
+		return books.stream()
+				.map(this::buildBookListResponse)
+				.collect(Collectors.toList());
+	}
 	
+	@Override
+	public void deleteBook(Long id) {
+		Book book=findBookByIdWithDetails(id);
+		
+		boolean hasActiveLoan=book.getBookItems().stream()
+				.anyMatch(bookItem ->bookItem.getStatus()==Status.BORROWED);
+		
+		if(hasActiveLoan) {
+			throw new BaseException(ErrorCode.BOOK_HAS_ACTIVE_LOAN,HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		
+		book.getCategories().clear();
+		bookRepository.save(book);
+		bookRepository.delete(book);
+		
+	}
+
 	
 	private Book findBookByIdWithDetails(Long id) {
 		Book bookWithCategories=findBookByIdWithCategories(id);
@@ -108,10 +135,10 @@ public class BookServiceImpl implements IBookService {
 		return bookRepository.findByIdWithCategories(id)
 				.orElseThrow(()->new BaseException(ErrorCode.BOOK_NOT_FOUND,HttpStatus.NOT_FOUND));
 		
+		
+		
 	}
 	
-
-
 	
 	private DtoBookResponse buildBookResponse(Book book) {
 		DtoBookResponse response=bookMapper.toDtoBookResponse(book);
@@ -120,6 +147,16 @@ public class BookServiceImpl implements IBookService {
 		response.setBookItems(bookItemMapper.todtoBookShortList(book.getBookItems()));
 		 return response;
 	}
+	
+	private DtoBookListResponse buildBookListResponse(Book book) {
+		DtoBookListResponse response=bookMapper.toDtoBookResponseList(book);
+		response.setAuthor(authorMapper.toDtoAuthorSummary(book.getAuthor()));
+		response.setCategories(categoryMapper.toCategoryShortResponseList(book.getCategories()));
+		return response;		
+	}
+
+	
+	
 
 	
 	

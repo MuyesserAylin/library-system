@@ -30,5 +30,5 @@ public interface IBookRepository extends JpaRepository<Book,Long>{
 	@Query("SELECT b FROM Book b " +                
 		       "LEFT JOIN FETCH b.author " +          
 		       "LEFT JOIN FETCH b.categories ")
-		List<Book> findByIdWithCategories();
+		List<Book> findAllWithCategories();
 }

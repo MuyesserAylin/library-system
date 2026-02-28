@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -30,6 +31,7 @@ public class DtoBookRequest {
 	private String ISBN;
 	
 	@NotNull(message="An author must be selected.")
+	@Min(value = 1, message = "Author ID must be greater than 0.")
 	private Long authorId;
 	
 	@NotEmpty(message="At least one category must be selected.")
