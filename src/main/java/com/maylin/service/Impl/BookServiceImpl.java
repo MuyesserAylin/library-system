@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoAuthorSummary;
+import com.maylin.dto.DtoBookCategoryUpdate;
 import com.maylin.dto.DtoBookListResponse;
 import com.maylin.dto.DtoBookRequest;
 import com.maylin.dto.DtoBookResponse;
+import com.maylin.dto.DtoBookUpdate;
 import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.enums.ErrorCode;
 import com.maylin.enums.Status;
@@ -116,6 +118,69 @@ public class BookServiceImpl implements IBookService {
 		bookRepository.delete(book);
 		
 	}
+	
+	@Override
+	public DtoBookResponse updateBook(Long id, DtoBookUpdate updateBook) {
+		Book book=findBookByIdWithDetails(id);
+		String title=book.getTitle();
+		String ISBN=book.getISBN(); 
+		
+		if(isNotBlank(updateBook.getTitle())) {
+			title=StringUtil.formatTitle(updateBook.getTitle());
+		}
+		
+		if(isNotBlank(updateBook.getISBN())) {
+			ISBN=StringUtil.formatISBN(updateBook.getISBN());
+			boolean exists=bookRepository.existsByISBN(ISBN);
+			
+			if(exists && !book.getISBN().equals(ISBN)) {
+				throw new BaseException(ErrorCode.BOOK_ALREADY_EXISTS,HttpStatus.CONFLICT);
+			}
+		}
+		
+		
+		if(updateBook.getAuthorId()!=null) {
+			Author author=authorRepository.findById(updateBook.getAuthorId())
+					.orElseThrow(()->new BaseException(ErrorCode.AUTHOR_NOT_FOUND,HttpStatus.NOT_FOUND));
+			book.setAuthor(author);
+		}
+		
+		book.setTitle(title);
+		book.setISBN(ISBN);
+		Book savedBook=bookRepository.save(book);
+		return buildBookResponse(savedBook);
+		
+	}
+	
+	@Override
+	public DtoBookResponse updateBookCategories(Long id, DtoBookCategoryUpdate updateCategory) {
+		
+		Book book=findBookByIdWithCategories(id);
+		List<Category> foundCategories=categoryRepository.findAllById(updateCategory.getCategoryIds());
+			Set<Long> requestIds=updateCategory.getCategoryIds();
+			if(foundCategories.size()<requestIds.size()) {
+				Set<Long> missingIds=new HashSet<Long>(updateCategory.getCategoryIds());
+				Set<Long> findIds=foundCategories.stream()
+						.map(Category ::getId)
+						.collect(Collectors.toSet());
+				missingIds.removeAll(findIds);
+				
+				throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND,missingIds);
+				
+			}
+			
+			book.getCategories().clear();
+			book.setCategories(foundCategories);
+		
+		Book savedBook=bookRepository.save(book);
+		return buildBookResponse(savedBook);
+	
+	}
+
+	
+	private boolean isNotBlank(String value) {
+		return value!=null && !value.isBlank();
+	}
 
 	
 	private Book findBookByIdWithDetails(Long id) {
@@ -134,9 +199,7 @@ public class BookServiceImpl implements IBookService {
 		
 		return bookRepository.findByIdWithCategories(id)
 				.orElseThrow(()->new BaseException(ErrorCode.BOOK_NOT_FOUND,HttpStatus.NOT_FOUND));
-		
-		
-		
+
 	}
 	
 	
@@ -155,6 +218,9 @@ public class BookServiceImpl implements IBookService {
 		return response;		
 	}
 
+	
+
+	
 	
 	
 
