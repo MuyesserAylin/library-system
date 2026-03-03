@@ -63,9 +63,21 @@ public class BookControllerImpl implements IBookController {
 
 	@Override
 	@PutMapping("/update/{id}/categories")
-	public DtoBookResponse updaateBookCategories(@PathVariable("id") Long id,
+	public DtoBookResponse updateBookCategories(@PathVariable("id") Long id,
 			@RequestBody DtoBookCategoryUpdate updateCategory) {
 		return bookService.updateBookCategories(id, updateCategory);
+	}
+
+	@Override
+	@PostMapping("/{id}/categories/{categoryId}")
+	public DtoBookResponse addBookCategory(@PathVariable("id")Long id, @PathVariable("categoryId")Long categoryId) {
+		return bookService.addBookCategory(id, categoryId);
+	}
+
+	@Override
+	@DeleteMapping("/{id}/categories/{categoryId}")
+	public DtoBookResponse removeBookCategory(@PathVariable("id")Long id,@PathVariable("categoryId")Long categoryId) {
+	    return  bookService.removeBookCategory(id, categoryId);
 	}
 
 	

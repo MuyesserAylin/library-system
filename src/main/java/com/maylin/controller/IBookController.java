@@ -24,7 +24,11 @@ public interface IBookController {
 	
 	public DtoBookResponse updateBook(@Min(value=1,message="Book id can be 1 least.")Long id,@Valid DtoBookUpdate updateBook);
 	
-	public DtoBookResponse updaateBookCategories(@Min(value=1,message="Book id can be 1 least.")Long id,@Valid DtoBookCategoryUpdate updateCategory);
+	public DtoBookResponse updateBookCategories(@Min(value=1,message="Book id can be 1 least.")Long id,@Valid DtoBookCategoryUpdate updateCategory);
+	
+	public DtoBookResponse addBookCategory(@Min(value=1,message="Book id can be 1 least.")Long id,@Min(value=1,message="Category id can be 1 least.")Long categoryId);
+	
+	public DtoBookResponse removeBookCategory(@Min(value=1,message="Book id can be 1 least.")Long id,@Min(value=1,message="Category id can be 1 least.")Long categoryId);
 	
 	
 }

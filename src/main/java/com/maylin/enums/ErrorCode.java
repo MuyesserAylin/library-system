@@ -27,6 +27,7 @@ public enum ErrorCode {
     BOOK_NOT_FOUND(4001,"Book not found."),
     BOOK_ALREADY_EXISTS(4002,"Book already exists"),
     BOOK_HAS_ACTIVE_LOAN(4003,"Book has active bookitem,cannot be deleted"),
+    BOOK_MUST_HAVE_CATEGORY(4004, "Book must have at least one category."),
     
     VALIDATION_ERROR(9001, "Validation failed."),
     INTERNAL_ERROR(9999, "An unexpected error occurred."),

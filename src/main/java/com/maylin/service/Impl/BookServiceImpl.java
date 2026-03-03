@@ -176,6 +176,52 @@ public class BookServiceImpl implements IBookService {
 		return buildBookResponse(savedBook);
 	
 	}
+	
+
+	@Override
+	public DtoBookResponse addBookCategory(Long id, Long categoryId) {
+		
+		Book book=findBookByIdWithDetails(id);
+		Category dbCategory=categoryRepository.findById(categoryId)
+				.orElseThrow(()->new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+		boolean exists=book.getCategories().stream()
+		        .anyMatch(category->category.getId().equals(dbCategory.getId()));
+		
+		if(exists) {
+			throw new BaseException(ErrorCode.CATEGORY_ALREADY_EXISTS,HttpStatus.CONFLICT);
+		}
+		
+		book.getCategories().add(dbCategory);
+		Book savedBook=bookRepository.save(book);
+		
+		return buildBookResponse(savedBook);
+		
+	}
+
+	@Override
+	public DtoBookResponse removeBookCategory(Long id, Long categoryId) {
+		Book book=findBookByIdWithDetails(id);
+		Category dbCategory=categoryRepository.findById(categoryId)
+				.orElseThrow(()->new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+		boolean exists=book.getCategories().stream()
+		        .anyMatch(category->category.getId().equals(dbCategory.getId()));
+		
+		if(!exists) {
+			throw new BaseException(ErrorCode.CATEGORY_NOT_FOUND,HttpStatus.NOT_FOUND);
+		}
+		
+		if(book.getCategories().size()==1) {
+			throw new BaseException(ErrorCode.BOOK_MUST_HAVE_CATEGORY,HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+		
+		book.getCategories().removeIf(category->category.getId().equals(dbCategory.getId()));
+		Book savedBook=bookRepository.save(book);
+		return buildBookResponse(savedBook);
+		
+	}
+	
 
 	
 	private boolean isNotBlank(String value) {
@@ -217,15 +263,5 @@ public class BookServiceImpl implements IBookService {
 		response.setCategories(categoryMapper.toCategoryShortResponseList(book.getCategories()));
 		return response;		
 	}
-
 	
-
-	
-	
-	
-
-	
-	
-	
-
 }

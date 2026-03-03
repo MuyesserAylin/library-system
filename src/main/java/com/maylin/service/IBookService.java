@@ -24,5 +24,9 @@ public interface IBookService {
 	
 	public DtoBookResponse updateBookCategories(Long id,DtoBookCategoryUpdate updateCategory);
 	
+	public DtoBookResponse addBookCategory(Long id,Long categoryId);
+	
+	public DtoBookResponse removeBookCategory(Long id,Long categoryId);
+	
 
 }
