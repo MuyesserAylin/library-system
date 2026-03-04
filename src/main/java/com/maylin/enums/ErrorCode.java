@@ -24,10 +24,15 @@ public enum ErrorCode {
     CATEGORY_ALREADY_EXISTS(3002, "Category already exists."),
     CATEGORY_HAS_BOOKS(3003, "Category has books, cannot be deleted."),
     
+    
+    
     BOOK_NOT_FOUND(4001,"Book not found."),
     BOOK_ALREADY_EXISTS(4002,"Book already exists"),
     BOOK_HAS_ACTIVE_LOAN(4003,"Book has active bookitem,cannot be deleted"),
     BOOK_MUST_HAVE_CATEGORY(4004, "Book must have at least one category."),
+    
+    BOOKITEM_NOT_FOUND(5001, "Bookitem not found."),
+    BOOKITEM_ALREADY_EXISTS(5002, "Bookitem already exists."),
     
     VALIDATION_ERROR(9001, "Validation failed."),
     INTERNAL_ERROR(9999, "An unexpected error occurred."),

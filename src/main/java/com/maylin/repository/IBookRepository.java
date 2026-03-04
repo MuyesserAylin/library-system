@@ -14,7 +14,10 @@ public interface IBookRepository extends JpaRepository<Book,Long>{
 	
 	boolean existsByISBN(String isbn);
 	
-	
+	@Query("SELECT b FROM Book b " +                         
+		       "LEFT JOIN FETCH b.author " +           
+		       "WHERE b.id = :id")
+		Optional<Book> findByIdWithAuthor(@Param("id") Long id);
 	
 	
 	@Query("SELECT b FROM Book b " +                

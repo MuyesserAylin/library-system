@@ -42,4 +42,9 @@ Projede kurulan exception handling mimarisini göstermektedir. Var olan bir yaza
 Book entiysi için save metodu eklenip test edildi.
 ![save](images/save_book.png)
 
+BookItem entitysi için save metodu eklenip test edildi.
+-Kitaplara fiziksel kopya (BookItem) ekleme
+- Benzersiz barkod kontrolü
+- Otomatik AVAILABLE statüsü
+![save](images/bookitem_save.png)
 

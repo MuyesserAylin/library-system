@@ -37,8 +37,5 @@ public class Author {
 	@OneToMany(mappedBy ="author")
 	private List<Book> books=new ArrayList<>();
 	
-	private String getfullName() {
-		return this.firstName+" "+this.lastName;
-	}
-
+	
 }

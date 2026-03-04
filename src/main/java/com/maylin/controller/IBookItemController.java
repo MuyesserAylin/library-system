@@ -1,0 +1,13 @@
+package com.maylin.controller;
+
+import com.maylin.dto.DtoBookItemRequest;
+import com.maylin.dto.DtoBookItemResponse;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+
+public interface IBookItemController {
+	
+	public DtoBookItemResponse saveBookitem(@Valid DtoBookItemRequest request);
+
+}

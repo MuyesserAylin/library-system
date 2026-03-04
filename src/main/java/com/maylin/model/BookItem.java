@@ -39,7 +39,6 @@ public class BookItem {
 	@Column(name="barcode",unique=true,nullable=false)
 	private String barcode;
 	
-	
 	@Column(name="status")
 	@Enumerated(EnumType.STRING)
 	private Status status=Status.AVAILABLE;

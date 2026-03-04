@@ -43,4 +43,8 @@ public class StringUtil {
 	    return result.toString().trim();
 	}
 	
+	public static String formatBarcode(String barcode) {
+		return barcode.trim();
+	}
+	
 }
