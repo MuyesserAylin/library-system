@@ -33,6 +33,7 @@ public enum ErrorCode {
     
     BOOKITEM_NOT_FOUND(5001, "Bookitem not found."),
     BOOKITEM_ALREADY_EXISTS(5002, "Bookitem already exists."),
+    BOOKITEM_HAS_ACTIVE_LOAN(5003, "Bookitem has active loan,cannot be deleted."),
     
     VALIDATION_ERROR(9001, "Validation failed."),
     INTERNAL_ERROR(9999, "An unexpected error occurred."),

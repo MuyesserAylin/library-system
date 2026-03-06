@@ -5,8 +5,10 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.maylin.dto.DtoLoanForBookItem;
 import com.maylin.dto.DtoLoanShortResponse;
 import com.maylin.model.Loan;
+import com.maylin.model.Member;
 
 @Mapper(componentModel="spring")
 public interface ILoanMapper {
@@ -14,8 +16,24 @@ public interface ILoanMapper {
 	@Mapping(target="barcode",source="loan.bookItem.barcode")
 	@Mapping(target="title",source="loan.bookItem.book.title")
 	DtoLoanShortResponse toDtoLoanShortResponse(Loan loan);
-	
-	
 	List<DtoLoanShortResponse>  toDtoList(List<Loan> loans);
+	
+	@Mapping(target="memberId",source="loan.member.id")
+	@Mapping(target="memberName",expression="java(combineMemberName(loan.getMember()))")
+	DtoLoanForBookItem toDtoLoanForBookItemResponse(Loan loan);
+	
+	List<DtoLoanForBookItem> toDtoLoanForBookItemList(List<Loan> loans);
+	
+	default String combineMemberName(Member member) {
+		if(member==null) {
+			return "Unknown Member";
+		}
+		
+		String fName=(member.getFirstName()!=null) ? member.getFirstName() : "";
+		String lName=(member.getLastName()!=null) ? member.getLastName() :"";
+		
+		return (fName+" "+lName);
+	}
+	
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.maylin.dto.DtoBookItemDetailResponse;
 import com.maylin.dto.DtoBookItemRequest;
 import com.maylin.dto.DtoBookItemResponse;
 import com.maylin.dto.DtoBookItemShortResponse;
@@ -16,6 +17,10 @@ public interface IBookItemMapper {
 	DtoBookItemShortResponse todtoBookItemShortResponse(BookItem bookItem);
 	
 	List<DtoBookItemShortResponse> todtoBookShortList(List<BookItem> bookItem);
+	
+	@Mapping(target="book",ignore=true)
+	@Mapping(target="loans",ignore=true)
+	DtoBookItemDetailResponse todtoBookItemDetailResponse(BookItem bookItem);
 	
 	@Mapping(target="book",ignore=true)
 	BookItem toEntity(DtoBookItemRequest bookItemRequest);

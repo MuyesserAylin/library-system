@@ -1,30 +1,27 @@
 package com.maylin.dto;
 
-import java.time.LocalDate;
+import java.util.List;
+
+import com.maylin.enums.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DtoLoanShortResponse {
+public class DtoBookItemDetailResponse {
 	
-	private Long id;
-	
-    private String title;
+    private Long id;
 	
 	private String barcode;
 	
-	private LocalDate loanDate;
+	private Status status;
 	
-	private LocalDate dueDate;
+	private DtoBookShortResponse book;
 	
-	private LocalDate returnDate;
-	
-	
+	public List<DtoLoanForBookItem> loans;
 
 }

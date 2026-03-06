@@ -6,18 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DtoLoanShortResponse {
+public class DtoLoanForBookItem {
 	
 	private Long id;
-	
-    private String title;
-	
-	private String barcode;
 	
 	private LocalDate loanDate;
 	
@@ -25,6 +20,8 @@ public class DtoLoanShortResponse {
 	
 	private LocalDate returnDate;
 	
+	private Long memberId;
 	
+	private String memberName;
 
 }
