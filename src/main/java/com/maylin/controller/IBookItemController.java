@@ -1,5 +1,7 @@
 package com.maylin.controller;
 
+import java.util.List;
+
 import com.maylin.dto.DtoBookItemDetailResponse;
 import com.maylin.dto.DtoBookItemRequest;
 import com.maylin.dto.DtoBookItemResponse;
@@ -14,5 +16,7 @@ public interface IBookItemController {
 	public DtoBookItemDetailResponse getBookItemById(@Min(value=1,message="BookItem id can be 1 least.")Long id);
 	
 	public void deleteBookItem(@Min(value=1,message="BookItem id can be 1 least.")Long id);
+	
+	public List<DtoBookItemResponse> getBookItemByBookId(@Min(value=1,message="BookItem id can be 1 least.") Long bookId);
 
 }

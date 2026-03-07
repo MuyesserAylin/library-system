@@ -1,5 +1,7 @@
 package com.maylin.controller.Impl;
 
+import java.util.List;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +44,12 @@ public class BookItemControllerImpl implements IBookItemController{
 	@DeleteMapping("/delete/{id}")
 	public void deleteBookItem(@PathVariable("id") Long id) {
        bookitemService.deleteBookItem(id);
+	}
+
+	@Override
+	@GetMapping("/list/book/{bookId}")
+	public List<DtoBookItemResponse> getBookItemByBookId(@PathVariable("bookId")Long bookId) {
+		return bookitemService.getBookItemByBookId(bookId);
 	}
 	
 	

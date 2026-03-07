@@ -1,5 +1,6 @@
 package com.maylin.service.Impl;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -66,6 +67,17 @@ public class BookItemServiceImpl implements IBookItemService{
 		
 		bookitemRepository.delete(bookitem);
 	}
+	
+	@Override
+	public List<DtoBookItemResponse> getBookItemByBookId(Long bookId) {
+		Book book=findBookById(bookId);
+		List<BookItem> bookItems=bookitemRepository.findAllByBookId(bookId);
+		List<DtoBookItemResponse> dtoList=bookItems.stream()
+				.map(this::buildBookItemResponse)
+				.collect(Collectors.toList());
+		return dtoList;
+	}
+
 
 	
 	private Book findBookById(Long bookId) {
@@ -98,6 +110,7 @@ public class BookItemServiceImpl implements IBookItemService{
 		
 	}
 
+	
 	
 	
 	

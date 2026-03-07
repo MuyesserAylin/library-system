@@ -1,5 +1,6 @@
 package com.maylin.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,15 @@ public interface IBookItemRepository extends JpaRepository<BookItem,Long>{
 		   "LEFT JOIN FETCH l.member " +
 		   "WHERE b.id=:id")
    Optional<BookItem> findByIdWithLoans(@Param("id")Long id);
+   
+   @Query("SELECT b FROM BookItem b LEFT JOIN FETCH b.book " +
+           "WHERE b.book.id=:bookId")
+   List<BookItem> findAllByBookId(@Param("bookId")Long bookId);
+   
+   @Query("SELECT b FROM BookItem b LEFT JOIN FETCH b.book " +
+           "WHERE b.id=:id")
+   Optional<BookItem> findByIdWithBook(@Param("id")Long id);
+   
+   
 
 }
