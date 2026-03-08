@@ -10,6 +10,7 @@ import com.maylin.dto.DtoLoanResponse;
 import com.maylin.enums.ErrorCode;
 import com.maylin.enums.Status;
 import com.maylin.exception.BaseException;
+import com.maylin.mapper.ILoanMapper;
 import com.maylin.model.BookItem;
 import com.maylin.model.Loan;
 import com.maylin.model.Member;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class LoanServiceImpl implements ILoanService {
 	
 	private final ILoanRepository loanRepository;
+	private final ILoanMapper loanMapper;
 	private final IMemberRepository memberRepository;
 	private final IBookItemRepository bookItemRepository;
 
@@ -31,6 +33,13 @@ public class LoanServiceImpl implements ILoanService {
 	public DtoLoanResponse borrowBook(DtoLoanRequest request) {
 		Member member=findMemberById(request.getMemberId());
 		BookItem bookitem=findBookItemByIdWithBook(request.getBookitemId());
+		
+		int overDueCount=loanRepository.hasOverDueLoansByMemberId(member.getId(),LocalDate.now());
+		
+		if(overDueCount>0) {
+			throw new BaseException(ErrorCode.MEMBER_HAS_OVERDUE_LOANS,HttpStatus.UNPROCESSABLE_ENTITY,overDueCount);
+			
+		}
 		
 		if(bookitem.getStatus()==Status.BORROWED ||
 				bookitem.getStatus()==Status.LOST) {
@@ -54,6 +63,7 @@ public class LoanServiceImpl implements ILoanService {
 		
 		Loan savedLoan=loanRepository.save(loan);
 		
+		return buildLoanResponse(savedLoan);
 		
 		
 		
@@ -69,6 +79,12 @@ public class LoanServiceImpl implements ILoanService {
 	private BookItem findBookItemByIdWithBook(Long bookitemId) {
 		return bookItemRepository.findByIdWithBook(bookitemId)
 				.orElseThrow(()->new BaseException(ErrorCode.BOOKITEM_NOT_FOUND,HttpStatus.NOT_FOUND));
+	}
+	
+	private DtoLoanResponse buildLoanResponse(Loan loan) {
+		return loanMapper.toDtoLoanResponse(loan);
+		
+		
 	}
 	
 

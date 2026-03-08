@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.maylin.dto.DtoLoanForBookItem;
+import com.maylin.dto.DtoLoanResponse;
 import com.maylin.dto.DtoLoanShortResponse;
 import com.maylin.model.Loan;
 import com.maylin.model.Member;
@@ -21,8 +22,12 @@ public interface ILoanMapper {
 	@Mapping(target="memberId",source="loan.member.id")
 	@Mapping(target="memberName",expression="java(combineMemberName(loan.getMember()))")
 	DtoLoanForBookItem toDtoLoanForBookItemResponse(Loan loan);
-	
 	List<DtoLoanForBookItem> toDtoLoanForBookItemList(List<Loan> loans);
+	
+	@Mapping(target="memberName",expression="java(combineMemberName(loan.getMember()))")
+	@Mapping(target="bookTitle",source="loan.bookItem.book.title")
+	@Mapping(target="barcode",source="loan.bookItem.barcode")
+	DtoLoanResponse toDtoLoanResponse(Loan loan);
 	
 	default String combineMemberName(Member member) {
 		if(member==null) {

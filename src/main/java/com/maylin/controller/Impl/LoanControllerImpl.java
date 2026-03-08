@@ -24,8 +24,7 @@ public class LoanControllerImpl implements ILoanController {
 	@Override
 	@PostMapping("/borrow")
 	public DtoLoanResponse borrowBook(@RequestBody DtoLoanRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		return loanService.borrowBook(request);
 	}
 	
 	

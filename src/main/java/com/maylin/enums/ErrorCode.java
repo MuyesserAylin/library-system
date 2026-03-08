@@ -13,6 +13,8 @@ public enum ErrorCode {
     MEMBER_NOT_FOUND(1001, "Member not found."),
     EMAIL_ALREADY_EXISTS(1002, "Email address already in use."),
     MEMBER_HAS_ACTIVE_LOAN(1003, "Member has active loans, cannot be deleted."),
+    MEMBER_LOAN_LIMIT_EXCEEDED(1004, "Member has reached the maximum loan limit."),
+    MEMBER_HAS_OVERDUE_LOANS(1005, "Member has overdue loans, please return them first."),
 
   
     AUTHOR_NOT_FOUND(2001, "Author not found."),
@@ -35,7 +37,7 @@ public enum ErrorCode {
     BOOKITEM_ALREADY_EXISTS(5002, "Bookitem already exists."),
     BOOKITEM_HAS_ACTIVE_LOAN(5003, "Bookitem has active loan,cannot be deleted."),
     BOOKITEM_NOT_AVAILABLE(5004, "BookItem is not available for borrowing."),
-    MEMBER_LOAN_LIMIT_EXCEEDED(5005, "Member has reached the maximum loan limit."),
+   
     
     VALIDATION_ERROR(9001, "Validation failed."),
     INTERNAL_ERROR(9999, "An unexpected error occurred."),

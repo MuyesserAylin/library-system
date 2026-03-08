@@ -48,3 +48,15 @@ BookItem entitysi için save metodu eklenip test edildi.
 - Otomatik AVAILABLE statüsü
 ![save](images/bookitem_save.png)
 
+
+Kitap ödünç alma metodu tamamlandı.
+
+-Statusu available olan nüshayı başarıyla ödünç alma.
+![borrow](images/borrow_book1.png)
+
+-Statusu available olmayan kitap ödünç alınma istendiğinde excepiton fırlatma.
+![borrow](images/borrow_book2.png)
+
+-Bir member en fazla 5 kitap alabilir kontrolü.
+![borrow](images/borrow_book3.png)
+
