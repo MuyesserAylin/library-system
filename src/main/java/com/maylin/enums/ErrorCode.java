@@ -39,6 +39,9 @@ public enum ErrorCode {
     BOOKITEM_NOT_AVAILABLE(5004, "BookItem is not available for borrowing."),
    
     
+    LOAN_NOT_FOUND(6001, "Loan not found."),
+    LOAN_ALREADY_RETURNED(6002, "Loan has already been returned."),
+    
     VALIDATION_ERROR(9001, "Validation failed."),
     INTERNAL_ERROR(9999, "An unexpected error occurred."),
     HTTP_MESSAGE_NOT_READABLE(9002, "Request body is missing or malformed.");

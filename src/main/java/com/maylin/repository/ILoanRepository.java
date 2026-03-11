@@ -1,6 +1,7 @@
 package com.maylin.repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,10 @@ public interface ILoanRepository  extends JpaRepository<Loan,Long>{
 			+ "l.dueDate<:today and returnDate IS NULL")
 	int hasOverDueLoansByMemberId(@Param("memberId")Long memberId,@Param("today")LocalDate today);
 
+	
+	@Query("SELECT l FROM Loan l "
+			+ "LEFT JOIN FETCH l.member "
+			+ "LEFT JOIN FETCH l.bookItem bi LEFT JOIN FETCH bi.book "
+			+ "WHERE l.id=:loanId")
+	Optional<Loan> findByIdWithDetails(@Param("loanId")Long loandId);
 }

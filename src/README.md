@@ -49,7 +49,7 @@ BookItem entitysi için save metodu eklenip test edildi.
 ![save](images/bookitem_save.png)
 
 
-Kitap ödünç alma metodu tamamlandı.
+Kitap Ödünç Alma 
 
 -Statusu available olan nüshayı başarıyla ödünç alma.
 ![borrow](images/borrow_book1.png)
@@ -60,3 +60,10 @@ Kitap ödünç alma metodu tamamlandı.
 -Bir member en fazla 5 kitap alabilir kontrolü.
 ![borrow](images/borrow_book3.png)
 
+ Ödünç Yönetimi
+ 
+ ![return](images/returnbook.png)
+ 
+- Aktif loan ve gecikme kontrolü ile kitap ödünç alma
+- Otomatik ceza hesaplamalı kitap iade etme
+- Günlük ceza tutarı application.properties üzerinden ayarlanabilir

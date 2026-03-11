@@ -1,12 +1,16 @@
 package com.maylin.service.Impl;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.maylin.dto.DtoLoanRequest;
 import com.maylin.dto.DtoLoanResponse;
+import com.maylin.dto.DtoLoanReturnResponse;
 import com.maylin.enums.ErrorCode;
 import com.maylin.enums.Status;
 import com.maylin.exception.BaseException;
@@ -28,6 +32,10 @@ public class LoanServiceImpl implements ILoanService {
 	private final ILoanMapper loanMapper;
 	private final IMemberRepository memberRepository;
 	private final IBookItemRepository bookItemRepository;
+	
+	@Value("${library.penalty.daily}")
+	private double dailyPenalty;
+	
 
 	@Override
 	public DtoLoanResponse borrowBook(DtoLoanRequest request) {
@@ -63,12 +71,35 @@ public class LoanServiceImpl implements ILoanService {
 		
 		Loan savedLoan=loanRepository.save(loan);
 		
-		return buildLoanResponse(savedLoan);
-		
-		
-		
+		return buildLoanResponse(savedLoan);	
 		
 	}
+	
+
+	@Override
+	public DtoLoanReturnResponse returnBook(Long loanId) {
+		Loan loan =loanRepository.findByIdWithDetails(loanId)
+				.orElseThrow(()->new BaseException(ErrorCode.LOAN_NOT_FOUND, HttpStatus.NOT_FOUND));
+		
+		if(loan.getReturnDate()!=null) {
+			throw new BaseException(ErrorCode.LOAN_ALREADY_RETURNED,HttpStatus.UNPROCESSABLE_ENTITY,loan.getReturnDate());
+		}
+		
+		double penalty=0.0;
+		if(LocalDate.now().isAfter(loan.getDueDate())) {
+			long overdueDays=ChronoUnit.DAYS.between(loan.getDueDate(),LocalDate.now());
+			penalty=overdueDays*dailyPenalty;
+		}
+
+		loan.getBookItem().setStatus(Status.AVAILABLE);
+		bookItemRepository.save(loan.getBookItem());
+		
+		loan.setReturnDate(LocalDate.now());
+		loanRepository.save(loan);
+		return buildLoanReturnResponse(loan,penalty);
+		
+	}
+	
 	
 	private Member findMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
@@ -83,9 +114,15 @@ public class LoanServiceImpl implements ILoanService {
 	
 	private DtoLoanResponse buildLoanResponse(Loan loan) {
 		return loanMapper.toDtoLoanResponse(loan);
+	}
+	
+	private DtoLoanReturnResponse buildLoanReturnResponse(Loan loan,Double penalty) {
+		DtoLoanReturnResponse response= loanMapper.toDtoLoanReturnResponse(loan);
+		response.setPenalty(penalty);
+		return response;
+		
 		
 		
 	}
-	
 
 }

@@ -2,6 +2,8 @@ package com.maylin.dto;
 
 import java.time.LocalDate;
 
+import com.maylin.enums.Status;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +20,8 @@ public class DtoLoanShortResponse {
     private String title;
 	
 	private String barcode;
+	
+	private Status status;
 	
 	private LocalDate loanDate;
 	
