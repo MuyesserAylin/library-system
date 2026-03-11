@@ -62,7 +62,7 @@ Kitap Ödünç Alma
 
  Ödünç Yönetimi
  
- ![return](images/returnbook.png)
+ ![return](images/returnBook.png)
  
 - Aktif loan ve gecikme kontrolü ile kitap ödünç alma
 - Otomatik ceza hesaplamalı kitap iade etme
