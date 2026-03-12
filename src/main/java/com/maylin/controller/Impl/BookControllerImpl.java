@@ -20,6 +20,7 @@ import com.maylin.dto.DtoBookShortResponse;
 import com.maylin.dto.DtoBookUpdate;
 import com.maylin.service.IBookService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 @RestController
@@ -32,13 +33,13 @@ public class BookControllerImpl implements IBookController {
 
 	@Override
 	@PostMapping("/save")
-	public DtoBookResponse saveBook(@RequestBody DtoBookRequest request) {
+	public DtoBookResponse saveBook(@Valid @RequestBody DtoBookRequest request) {
 		return bookService.saveBook(request);
 	}
 
 	@Override
 	@GetMapping("/list/{id}")
-	public DtoBookResponse getBookById(@PathVariable("id") Long id) {
+	public DtoBookResponse getBookById(@PathVariable("id") @Min(1) Long id) {
 		return bookService.getBookById(id);
 	}
 
@@ -50,33 +51,33 @@ public class BookControllerImpl implements IBookController {
 
 	@Override
 	@DeleteMapping("/delete/{id}")
-	public void deleteBook(@PathVariable("id")Long id) {
+	public void deleteBook(@PathVariable("id") @Min(1)Long id) {
 		bookService.deleteBook(id);
 	}
 
 	@Override
 	@PutMapping("/update/{id}")
-	public DtoBookResponse updateBook(@PathVariable("id") Long id,
+	public DtoBookResponse updateBook(@PathVariable("id") @Min(1)Long id,
 			@RequestBody DtoBookUpdate updateBook) {
 		return bookService.updateBook(id, updateBook);
 	}
 
 	@Override
 	@PutMapping("/update/{id}/categories")
-	public DtoBookResponse updateBookCategories(@PathVariable("id") Long id,
+	public DtoBookResponse updateBookCategories(@PathVariable("id") @Min(1)Long id,
 			@RequestBody DtoBookCategoryUpdate updateCategory) {
 		return bookService.updateBookCategories(id, updateCategory);
 	}
 
 	@Override
 	@PostMapping("/{id}/categories/{categoryId}")
-	public DtoBookResponse addBookCategory(@PathVariable("id")Long id, @PathVariable("categoryId")Long categoryId) {
+	public DtoBookResponse addBookCategory(@PathVariable("id")@Min(1)Long id, @PathVariable("categoryId")@Min(1)Long categoryId) {
 		return bookService.addBookCategory(id, categoryId);
 	}
 
 	@Override
 	@DeleteMapping("/{id}/categories/{categoryId}")
-	public DtoBookResponse removeBookCategory(@PathVariable("id")Long id,@PathVariable("categoryId")Long categoryId) {
+	public DtoBookResponse removeBookCategory(@PathVariable("id") @Min(1)Long id,@PathVariable("categoryId") @Min(1)Long categoryId) {
 	    return  bookService.removeBookCategory(id, categoryId);
 	}
 

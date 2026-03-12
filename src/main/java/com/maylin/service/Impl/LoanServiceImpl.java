@@ -2,7 +2,9 @@ package com.maylin.service.Impl;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.maylin.dto.DtoLoanRequest;
 import com.maylin.dto.DtoLoanResponse;
 import com.maylin.dto.DtoLoanReturnResponse;
+import com.maylin.dto.DtoLoanShortResponse;
 import com.maylin.enums.ErrorCode;
 import com.maylin.enums.Status;
 import com.maylin.exception.BaseException;
@@ -100,6 +103,27 @@ public class LoanServiceImpl implements ILoanService {
 		
 	}
 	
+	@Override
+	public DtoLoanShortResponse getLoanById(Long loanId) {
+		Loan loan=loanRepository.findByIdWithBookItem(loanId)
+				.orElseThrow(()->new BaseException(ErrorCode.LOAN_NOT_FOUND,HttpStatus.NOT_FOUND));
+		
+		return buildLoanShortResponse(loan);
+	}
+	
+	@Override
+	public List<DtoLoanShortResponse> getOverdueLoans() {
+		LocalDate today=LocalDate.now();
+		List<Loan> overDueLoans=loanRepository.findOverDueLoans(today);
+		
+	    List<DtoLoanShortResponse> responseList=overDueLoans.stream()
+				.map(this::buildLoanShortResponse)
+				.collect(Collectors.toList());
+	    
+	    return responseList;
+		
+	}
+	
 	
 	private Member findMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
@@ -120,9 +144,14 @@ public class LoanServiceImpl implements ILoanService {
 		DtoLoanReturnResponse response= loanMapper.toDtoLoanReturnResponse(loan);
 		response.setPenalty(penalty);
 		return response;
-		
-		
-		
 	}
+	
+	private DtoLoanShortResponse buildLoanShortResponse(Loan loan) {
+		return loanMapper.toDtoLoanShortResponse(loan);
+	}
+
+
+	
+
 
 }

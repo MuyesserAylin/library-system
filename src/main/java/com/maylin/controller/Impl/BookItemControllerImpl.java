@@ -30,25 +30,25 @@ public class BookItemControllerImpl implements IBookItemController{
 
 	@Override
 	@PostMapping("/save")
-	public DtoBookItemResponse saveBookitem(@RequestBody DtoBookItemRequest request) {
+	public DtoBookItemResponse saveBookitem(@Valid @RequestBody DtoBookItemRequest request) {
 		return bookitemService.saveBookitem(request);
 	}
 
 	@Override
 	@GetMapping("/list/{id}")
-	public DtoBookItemDetailResponse getBookItemById(@PathVariable("id")Long id) {
+	public DtoBookItemDetailResponse getBookItemById(@PathVariable("id")@Min(1)Long id) {
 		return bookitemService.getBookItemById(id);
 	}
 
 	@Override
 	@DeleteMapping("/delete/{id}")
-	public void deleteBookItem(@PathVariable("id") Long id) {
+	public void deleteBookItem(@PathVariable("id") @Min(1)Long id) {
        bookitemService.deleteBookItem(id);
 	}
 
 	@Override
 	@GetMapping("/list/book/{bookId}")
-	public List<DtoBookItemResponse> getBookItemByBookId(@PathVariable("bookId")Long bookId) {
+	public List<DtoBookItemResponse> getBookItemByBookId(@PathVariable("bookId")@Min(1)Long bookId) {
 		return bookitemService.getBookItemByBookId(bookId);
 	}
 	

@@ -33,13 +33,13 @@ public class MemberControllerImpl implements IMemberController{
 
 	@Override
 	@PostMapping("/save")
-	public DtoMemberShortResponse saveMember(@RequestBody DtoMemberRequest request) {
+	public DtoMemberShortResponse saveMember(@Valid @RequestBody DtoMemberRequest request) {
 		return memberService.saveMember(request);
 	}
 
 	@Override
 	@GetMapping("/list/{id}")
-	public DtoMemberResponse getMemberById(@PathVariable("id")Long id) {
+	public DtoMemberResponse getMemberById(@PathVariable("id")@Min(1)Long id) {
 		return memberService.getMemberById(id);
 	}
 
@@ -51,15 +51,15 @@ public class MemberControllerImpl implements IMemberController{
 
 	@Override
 	@DeleteMapping("/delete/{id}")
-	public void deleteMemberById(@PathVariable("id") Long id) {
+	public void deleteMemberById(@PathVariable("id")@Min(1) Long id) {
 		memberService.deleteMemberById(id);
 		
 	}
 
 	@Override
 	@PutMapping("/update/{id}")
-	public DtoMemberShortResponse updateMember(@PathVariable("id") Long id,
-			@RequestBody DtoMemberUpdate updateMember) {
+	public DtoMemberShortResponse updateMember(@PathVariable("id") @Min(1)Long id,
+			@Valid @RequestBody DtoMemberUpdate updateMember) {
 		return memberService.updateMember(id, updateMember);
 	}
 	

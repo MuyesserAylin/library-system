@@ -21,18 +21,20 @@ import com.maylin.service.ICategoryService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping(path="/rest/api/category")
 @Validated
+@RequiredArgsConstructor
 public class CategoryControllerImpl implements ICategoryController{
 
-	@Autowired
-	private ICategoryService categoryService;
+	
+	private final ICategoryService categoryService;
 	
 	@Override
 	@PostMapping(path="/save")
-	public DtoCategoryResponse saveCategory(@RequestBody DtoCategoryRequest request) {
+	public DtoCategoryResponse saveCategory(@Valid @RequestBody DtoCategoryRequest request) {
 		
 		return categoryService.saveCategory(request);
 		
@@ -40,9 +42,8 @@ public class CategoryControllerImpl implements ICategoryController{
 
 	@Override
 	@GetMapping(path="/list/{id}")
-	public DtoCategoryResponse getCategoryById(@PathVariable("id") Long id) {
+	public DtoCategoryResponse getCategoryById(@PathVariable("id") @Min(1)Long id) {
 		
-		//TODO:id negatif olursa exception fırlatıcak
 		return categoryService.getCategoryById(id);
 		
 	}
@@ -56,14 +57,14 @@ public class CategoryControllerImpl implements ICategoryController{
 
 	@Override
 	@DeleteMapping(path="/delete/{id}")
-	public void deleteCategory(@PathVariable("id") Long id) {
+	public void deleteCategory(@PathVariable("id") @Min(1)Long id) {
 		categoryService.deleteCategory(id);
 	}
 
 	@Override
 	@PutMapping(path="/update/{id}")
-	public DtoCategoryShortResponse updateCategory(@PathVariable("id")Long id,
-			@RequestBody DtoCategoryUpdate updateCategory) {
+	public DtoCategoryShortResponse updateCategory(@PathVariable("id")@Min(1)Long id,
+			@Valid @RequestBody DtoCategoryUpdate updateCategory) {
 		// TODO Auto-generated method stub
 		return categoryService.updateCategory(id, updateCategory);
 	}

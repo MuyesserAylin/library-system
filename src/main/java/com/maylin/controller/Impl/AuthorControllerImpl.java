@@ -21,6 +21,7 @@ import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.service.IAuthorService;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 @RestController
@@ -33,7 +34,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@PostMapping(path="/save")
-	public DtoAuthorResponse saveAuthor(@RequestBody DtoAuthorRequest request) {
+	public DtoAuthorResponse saveAuthor(@Valid @RequestBody DtoAuthorRequest request) {
 		
 		return authorService.saveAuthor(request);
 	}
@@ -48,7 +49,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@GetMapping(path="/list/{id}")
-	public DtoAuthorResponse getAuthorById(@PathVariable("id") Long id) {
+	public DtoAuthorResponse getAuthorById(@PathVariable("id")@Min(1) Long id) {
 		// TODO Auto-generated method stub
 		return authorService.getAuthorById(id);
 	}
@@ -56,7 +57,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@DeleteMapping(path="/delete/{id}")
-	public void deleteAuthor(@PathVariable("id")Long id) {
+	public void deleteAuthor(@PathVariable("id")@Min(1)Long id) {
 		authorService.deleteAuthor(id);
 		
 	}
@@ -64,7 +65,7 @@ public class AuthorControllerImpl  implements IAuthorController{
 
 	@Override
 	@PutMapping(path="/update/{id}")
-	public DtoAuthorResponse updateAuthor(@PathVariable("id")Long id, @RequestBody DtoAuthorUpdate updateAuthor) {
+	public DtoAuthorResponse updateAuthor(@PathVariable("id")@Min(1)Long id,@Valid @RequestBody DtoAuthorUpdate updateAuthor) {
 		return authorService.updateAuthor(id, updateAuthor);
 	}
 	
