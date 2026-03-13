@@ -3,6 +3,7 @@ package com.maylin.controller.Impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.maylin.controller.IAuthorController;
+import com.maylin.dto.ApiResponse;
 import com.maylin.dto.DtoAuthorRequest;
 import com.maylin.dto.DtoAuthorResponse;
 import com.maylin.dto.DtoAuthorUpdate;
@@ -21,6 +23,7 @@ import com.maylin.mapper.IAuthorMapper;
 import com.maylin.model.Author;
 import com.maylin.service.IAuthorService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -28,50 +31,40 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping(path="/rest/api/author")
 @RequiredArgsConstructor
 @Validated
-public class AuthorControllerImpl  implements IAuthorController{
+public class AuthorControllerImpl extends RestBaseController implements IAuthorController{
 	
 	private final IAuthorService authorService;
 
 	@Override
-	@PostMapping(path="/save")
-	public DtoAuthorResponse saveAuthor(@Valid @RequestBody DtoAuthorRequest request) {
-		
-		return authorService.saveAuthor(request);
+	@PostMapping("/save")
+	public ResponseEntity<ApiResponse<DtoAuthorResponse>> saveAuthor(@Valid @RequestBody DtoAuthorRequest request, HttpServletRequest httpRequest) {
+	    return created(authorService.saveAuthor(request), httpRequest);
 	}
-
-	
-	@Override
-	@GetMapping(path="/list")
-	public List<DtoAuthorResponse> getAllAuthors() {
-		return authorService.getAllAuthors();
-	}
-
 
 	@Override
-	@GetMapping(path="/list/{id}")
-	public DtoAuthorResponse getAuthorById(@PathVariable("id")@Min(1) Long id) {
-		// TODO Auto-generated method stub
-		return authorService.getAuthorById(id);
+	@GetMapping("/list")
+	public ResponseEntity<ApiResponse<List<DtoAuthorResponse>>> getAllAuthors(HttpServletRequest httpRequest) {
+	    return ok(authorService.getAllAuthors(), httpRequest);
 	}
-
 
 	@Override
-	@DeleteMapping(path="/delete/{id}")
-	public void deleteAuthor(@PathVariable("id")@Min(1)Long id) {
-		authorService.deleteAuthor(id);
-		
+	@GetMapping("/list/{id}")
+	public ResponseEntity<ApiResponse<DtoAuthorResponse>> getAuthorById(@PathVariable("id") @Min(1) Long id, HttpServletRequest httpRequest) {
+	    return ok(authorService.getAuthorById(id), httpRequest);
 	}
-
 
 	@Override
-	@PutMapping(path="/update/{id}")
-	public DtoAuthorResponse updateAuthor(@PathVariable("id")@Min(1)Long id,@Valid @RequestBody DtoAuthorUpdate updateAuthor) {
-		return authorService.updateAuthor(id, updateAuthor);
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<ApiResponse<Void>> deleteAuthor(@PathVariable("id") @Min(1) Long id, HttpServletRequest httpRequest) {
+	    authorService.deleteAuthor(id);
+	    return ok(null, httpRequest);
 	}
-	
-	
-	
-	
+
+	@Override
+	@PutMapping("/update/{id}")
+	public ResponseEntity<ApiResponse<DtoAuthorResponse>> updateAuthor(@PathVariable("id") @Min(1) Long id, @Valid @RequestBody DtoAuthorUpdate updateAuthor, HttpServletRequest httpRequest) {
+	    return ok(authorService.updateAuthor(id, updateAuthor), httpRequest);
+	}
 	
 	
 	

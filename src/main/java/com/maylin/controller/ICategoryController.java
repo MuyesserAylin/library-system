@@ -2,25 +2,25 @@ package com.maylin.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
+import com.maylin.dto.ApiResponse;
 import com.maylin.dto.DtoCategoryRequest;
 import com.maylin.dto.DtoCategoryResponse;
 import com.maylin.dto.DtoCategoryShortResponse;
 import com.maylin.dto.DtoCategoryUpdate;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 public interface ICategoryController {
 
-	public DtoCategoryResponse saveCategory(@Valid DtoCategoryRequest request);
-	
-	public DtoCategoryResponse getCategoryById(@Min(value=1,message="Category ID must be at least 1.")Long id);
-	
-	public List<DtoCategoryShortResponse> getAllCategories();
-	
-	public void deleteCategory(@Min(value=1,message="Category ID must be at least 1.")Long id);
-	
-	public DtoCategoryShortResponse updateCategory(@Min(value=1, message="Category ID must be at least 1.")Long id, @Valid DtoCategoryUpdate updateCategory);
+	 ResponseEntity<ApiResponse<DtoCategoryResponse>> saveCategory(@Valid DtoCategoryRequest request, HttpServletRequest httpRequest);
+	 ResponseEntity<ApiResponse<DtoCategoryResponse>> getCategoryById(@Min(1) Long id, HttpServletRequest httpRequest);
+	 ResponseEntity<ApiResponse<List<DtoCategoryShortResponse>>> getAllCategories(HttpServletRequest httpRequest);
+	 ResponseEntity<ApiResponse<Void>> deleteCategory(@Min(1) Long id, HttpServletRequest httpRequest);
+	 ResponseEntity<ApiResponse<DtoCategoryShortResponse>> updateCategory(@Min(1) Long id, @Valid DtoCategoryUpdate updateCategory, HttpServletRequest httpRequest);
 
 	
 	

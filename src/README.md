@@ -67,3 +67,10 @@ Kitap Ödünç Alma
 - Aktif loan ve gecikme kontrolü ile kitap ödünç alma
 - Otomatik ceza hesaplamalı kitap iade etme
 - Günlük ceza tutarı application.properties üzerinden ayarlanabilir
+
+
+RestBaseController ile tek tipte (ApiResponse) veri dönüldü.
+![dto](images/BaseController1.png)
+
+![dto](images/BaseController2.png)
+ 
