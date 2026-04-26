@@ -2,8 +2,7 @@
 
 Bu proje, bir kütüphanenin temel işleyişini (üye, kitap, ödünç alma) yönetmek için geliştirilmektedir.
 
-## ✅ Bugün Neler Yapıldı? (2026-02-08)
-Bugün projenin **Domain Model (Entity)** katmanı ve veritabanı ilişkileri başarıyla tamamlandı:
+Projenin **Domain Model (Entity)** katmanı ve veritabanı ilişkileri başarıyla tamamlandı:
 
 * **Member & Loan:** Üye ve ödünç alma arasındaki `OneToMany` ilişkisi kuruldu. 👤📄
 * **Book & BookItem:** Kitap genel bilgileri ile fiziksel kopyalar arasındaki ilişki yapılandırıldı. 📚🆔
